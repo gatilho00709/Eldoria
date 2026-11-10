@@ -1,0 +1,57 @@
+
+.account-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 9px 24px;
+  border-bottom: 1px solid rgba(180, 145, 85, 0.15);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.account-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #bca77f;
+  font-size: 12px;
+  min-width: 0;
+}
+
+.account-info span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-logout {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(190, 145, 75, 0.35);
+  border-radius: 7px;
+  padding: 7px 11px;
+  background: rgba(100, 70, 30, 0.15);
+  color: #d6bd8d;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.account-logout:hover {
+  background: rgba(150, 95, 40, 0.3);
+}
+
+.account-logout:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+@media (max-width: 480px) {
+  .account-bar {
+    padding: 8px 12px;
+  }
+
+  .account-info {
+    max-width: 65%;
+  }
+}
