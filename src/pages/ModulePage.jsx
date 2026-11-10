@@ -7,6 +7,7 @@ import TasksApp from '../modules/tasks/TasksApp'
 import CalendarApp from '../modules/calendar/CalendarApp'
 import HabitsApp from '../modules/habits/HabitsApp'
 import ConnectApp from '../modules/connect/ConnectApp'
+import CodeLibraryApp from '../modules/code-library/CodeLibraryApp'
 
 export default function ModulePage() {
   const { appId } = useParams()
@@ -22,6 +23,10 @@ export default function ModulePage() {
       </div>
     )
   }
+
+  if (appId === 'code-library') {
+  return <CodeLibraryApp />
+}
 
   if (appId === 'notes') {
     return <NotesApp />

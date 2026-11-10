@@ -71,49 +71,74 @@ export default function ConnectApp() {
     init()
   }, [])
 
-  useEffect(() => {
-    if (!active) {
-      setMessages([])
-      return
+  
+useEffect(() => {
+  if (!active) {
+    setMessages([])
+    return
+  }
+
+  let alive = true
+
+  const channel = subscribeConnectMessages(active.id, (payload) => {
+    if (!alive) return
+
+    if (payload.eventType === 'INSERT') {
+      setMessages((current) => {
+        if (current.some((m) => m.id === payload.new.id)) {
+          return current
+        }
+
+        return [...current, payload.new].sort(
+          (a, b) => new Date(a.created_at) - new Date(b.created_at)
+        )
+      })
     }
 
-    let alive = true
-
-    async function load() {
-      try {
-        const data = await getConnectMessages(active.id)
-        if (alive) setMessages(data)
-      } catch (e) {
-        setError(e.message)
-      }
+    if (payload.eventType === 'UPDATE') {
+      setMessages((current) =>
+        current.map((m) =>
+          m.id === payload.new.id ? payload.new : m
+        )
+      )
     }
 
-    load()
+    if (payload.eventType === 'DELETE') {
+      setMessages((current) =>
+        current.filter((m) => m.id !== payload.old.id)
+      )
+    }
+  })
 
-    const channel = subscribeConnectMessages(active.id, async (payload) => {
-      if (!alive) return
+  async function load() {
+    try {
+      const data = await getConnectMessages(active.id)
 
-      if (payload.eventType === 'INSERT') {
+      if (alive) {
         setMessages((current) => {
-          if (current.some((m) => m.id === payload.new.id)) return current
-          return [...current, payload.new]
-        })
-      } else if (payload.eventType === 'UPDATE') {
-        setMessages((current) =>
-          current.map((m) => m.id === payload.new.id ? payload.new : m)
-        )
-      } else if (payload.eventType === 'DELETE') {
-        setMessages((current) =>
-          current.filter((m) => m.id !== payload.old.id)
-        )
-      }
-    })
+          const combined = new Map()
 
-    return () => {
-      alive = false
-      channel.unsubscribe()
+          data.forEach((message) => combined.set(message.id, message))
+          current.forEach((message) => combined.set(message.id, message))
+
+          return [...combined.values()].sort(
+            (a, b) => new Date(a.created_at) - new Date(b.created_at)
+          )
+        })
+      }
+    } catch (e) {
+      if (alive) setError(e.message)
     }
-  }, [active?.id])
+  }
+
+  load()
+
+  return () => {
+    alive = false
+    channel.unsubscribe()
+  }
+}, [active?.id])
+
 
   useEffect(() => {
     messageEnd.current?.scrollIntoView({ behavior: 'smooth' })
@@ -193,19 +218,30 @@ export default function ConnectApp() {
     }
   }
 
-  async function send(e) {
-    e.preventDefault()
-    if (!text.trim() || !active || busy) return
+  
+async function send(e) {
+  e.preventDefault()
+  if (!text.trim() || !active || busy) return
 
-    const content = text.trim()
-    setText('')
-    try {
-      await sendConnectMessage(active.id, content)
-    } catch (e) {
-      setText(content)
-      setError(e.message)
-    }
+  const content = text.trim()
+  setText('')
+
+  try {
+    const message = await sendConnectMessage(active.id, content)
+
+    setMessages((current) => {
+      if (current.some((m) => m.id === message.id)) return current
+
+      return [...current, message].sort(
+        (a, b) => new Date(a.created_at) - new Date(b.created_at)
+      )
+    })
+  } catch (e) {
+    setText(content)
+    setError(e.message)
   }
+}
+
 
   async function uploadImage(e) {
     const file = e.target.files?.[0]
@@ -287,16 +323,22 @@ export default function ConnectApp() {
           <button onClick={() => setCall(null)}><X/> Sair</button>
         </div>
         <LiveKitRoom
-          serverUrl={call.url}
-          token={call.token}
-          connect={true}
-          video={call.video}
-          audio={true}
-          onDisconnected={() => setCall(null)}
-          style={{ height: 'calc(100% - 60px)' }}
-        >
-          <VideoConference/>
-        </LiveKitRoom>
+  serverUrl={call.url}
+  token={call.token}
+  connect={true}
+  video={call.video}
+  audio={true}
+  onConnected={() => {
+    console.log('ELDORIA CONNECT: Conectado ao LiveKit!')
+  }}
+  onDisconnected={(reason) => {
+    console.error('ELDORIA CONNECT: LiveKit desconectou:', reason)
+    setError('A conexão com o servidor de chamadas foi encerrada.')
+  }}
+  style={{ height: 'calc(100% - 60px)' }}
+>
+  <VideoConference/>
+</LiveKitRoom>
       </div>
     )
   }

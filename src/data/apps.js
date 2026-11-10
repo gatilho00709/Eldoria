@@ -9,7 +9,17 @@ import {
   MessageCircle,
 } from 'lucide-react'
 
+import { Code2 } from 'lucide-react'
+
 export const apps = [
+
+  {
+  id: 'code-library',
+  name: 'Biblioteca de Código',
+  description: 'Organize, edite e compartilhe códigos.',
+  icon: Code2,
+  },
+
   {
     id: 'thumbnail',
     name: 'Criador de Thumbnail',
@@ -65,5 +75,5 @@ export const apps = [
   category: 'Comunicação',
   icon: MessageCircle,
   status: 'Disponível',
-},
+  },
 ]
