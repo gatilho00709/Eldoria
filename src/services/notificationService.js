@@ -99,12 +99,31 @@ export async function registerPushNotifications() {
 // SINCRONIZAÇÃO DOS LEMBRETES DO CALENDÁRIO
 // ==========================================
 
+
 export async function syncCalendarReminders(events) {
   const user = await getCurrentUser()
   const now = Date.now()
 
-  const reminders = events
-    .filter(event => Number(event.reminderMinutes) > 0 && event.startsAt)
+  // Busca os lembretes de calendário que já existem
+  const { data: existing, error: loadError } = await supabase
+    .from('scheduled_notifications')
+    .select('id, source_id, status')
+    .eq('user_id', user.id)
+    .eq('source_type', 'calendar')
+
+  if (loadError) throw loadError
+
+  const existingBySource = new Map(
+    (existing || []).map(item => [item.source_id, item])
+  )
+
+  // Monta os lembretes dos eventos que ainda vão acontecer
+  const desired = events
+    .filter(event =>
+      Number(event.reminderMinutes) > 0 &&
+      event.startsAt &&
+      new Date(event.startsAt).getTime() > now
+    )
     .map(event => {
       const reminderAt =
         new Date(event.startsAt).getTime() -
@@ -113,45 +132,25 @@ export async function syncCalendarReminders(events) {
       return {
         user_id: user.id,
         source_type: 'calendar',
-        source_id: event.id,
+        source_id: String(event.id),
         title: `Lembrete: ${event.title}`,
-        body: event.description ||
-          'Seu evento está prestes a começar.',
-        scheduled_at: new Date(reminderAt).toISOString(),
-        status: 'pending',
+        body: event.description || 'Seu evento está prestes a começar.',
+        scheduled_at: new Date(Math.max(reminderAt, now)).toISOString(),
         updated_at: new Date().toISOString(),
       }
     })
-    .filter(item => new Date(item.scheduled_at).getTime() > now)
 
-  if (reminders.length) {
-    const { error } = await supabase
-      .from('scheduled_notifications')
-      .upsert(reminders, {
-        onConflict: 'user_id,source_type,source_id',
-      })
+  const desiredIds = new Set(
+    desired.map(item => item.source_id)
+  )
 
-    if (error) throw error
-  }
-
-  const activeIds = reminders.map(item => item.source_id)
-
-  let query = supabase
-    .from('scheduled_notifications')
-    .select('id, source_id')
-    .eq('user_id', user.id)
-    .eq('source_type', 'calendar')
-    .eq('status', 'pending')
-
-  if (activeIds.length) {
-    query = query.not('source_id', 'in', `(${activeIds.join(',')})`)
-  }
-
-  const { data: obsolete, error: loadError } = await query
-
-  if (loadError) throw loadError
-
-  const obsoleteIds = (obsolete || []).map(item => item.id)
+  // Remove somente lembretes pendentes que deixaram de ser necessários
+  const obsoleteIds = (existing || [])
+    .filter(item =>
+      item.status === 'pending' &&
+      !desiredIds.has(item.source_id)
+    )
+    .map(item => item.id)
 
   if (obsoleteIds.length) {
     const { error } = await supabase
@@ -162,4 +161,44 @@ export async function syncCalendarReminders(events) {
 
     if (error) throw error
   }
+
+  // Atualiza os pendentes e cria os novos sem duplicar os enviados
+  const newReminders = []
+
+  for (const reminder of desired) {
+    const previous = existingBySource.get(reminder.source_id)
+
+    if (!previous) {
+      newReminders.push(reminder)
+      continue
+    }
+
+    // Nunca transforma um lembrete enviado ou em processamento em pendente
+    if (previous.status !== 'pending') continue
+
+    const { error } = await supabase
+      .from('scheduled_notifications')
+      .update({
+        title: reminder.title,
+        body: reminder.body,
+        scheduled_at: reminder.scheduled_at,
+        updated_at: reminder.updated_at,
+      })
+      .eq('user_id', user.id)
+      .eq('source_type', 'calendar')
+      .eq('source_id', reminder.source_id)
+      .eq('status', 'pending')
+
+    if (error) throw error
+  }
+
+  // Insere apenas os lembretes que ainda não existiam
+  if (newReminders.length) {
+    const { error } = await supabase
+      .from('scheduled_notifications')
+      .insert(newReminders)
+
+    if (error) throw error
+  }
 }
+
