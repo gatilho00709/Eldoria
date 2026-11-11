@@ -1,0 +1,19 @@
+
+{
+  "id": "/",
+  "name": "Eldoria",
+  "short_name": "Eldoria",
+  "description": "Seu espaço de produtividade e organização.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#101114",
+  "theme_color": "#101114",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

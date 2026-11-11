@@ -9,6 +9,10 @@ import {
   syncCalendarWorkspace,
 } from '../../services/eldoriaData'
 import './CalendarApp.css'
+import {
+  registerPushNotifications,
+  syncCalendarReminders,
+} from '../../services/notificationService'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 const CATEGORIES = [
@@ -95,6 +99,7 @@ export default function CalendarApp() {
   const [notificationPermission, setNotificationPermission] = useState(
     typeof Notification === 'undefined' ? 'unsupported' : Notification.permission
   )
+  const [pushRegistered, setPushRegistered] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -118,47 +123,28 @@ export default function CalendarApp() {
   }, [])
 
   useEffect(() => {
-    if (loading || !ready) return
-    setSaveState('Salvando...')
-    const timeout = window.setTimeout(() => {
-      syncCalendarWorkspace(events)
-        .then(() => {
-          setSaveState('Tudo sincronizado')
-          setError('')
-        })
-        .catch(err => {
-          setSaveState('Erro ao salvar')
-          setError(err.message || 'Não foi possível salvar os eventos.')
-        })
-    }, 450)
-    return () => window.clearTimeout(timeout)
-  }, [events, loading, ready])
+  if (loading || !ready) return
 
-  useEffect(() => {
-    if (notificationPermission !== 'granted') return
+  setSaveState('Salvando...')
 
-    const checkReminders = () => {
-      const now = Date.now()
-      events.forEach(event => {
-        if (!event.reminderMinutes || !event.startsAt) return
-        const reminderAt = new Date(event.startsAt).getTime() - event.reminderMinutes * 60000
-        const dueNow = reminderAt <= now && reminderAt > now - 60 * 1000
-        if (!dueNow) return
-
-        const storageKey = `eldoria-calendar-reminder-${event.id}-${event.startsAt}`
-        if (window.localStorage.getItem(storageKey)) return
-
-        new Notification(`Lembrete: ${event.title}`, {
-          body: event.description || 'Seu evento está prestes a começar.',
-        })
-        window.localStorage.setItem(storageKey, 'sent')
+  const timeout = window.setTimeout(() => {
+    Promise.all([
+      syncCalendarWorkspace(events),
+      syncCalendarReminders(events),
+    ])
+      .then(() => {
+        setSaveState('Tudo sincronizado')
+        setError('')
       })
-    }
+      .catch(err => {
+        setSaveState('Erro ao sincronizar')
+        setError(err.message || 'Não foi possível sincronizar o calendário.')
+      })
+  }, 450)
 
-    checkReminders()
-    const interval = window.setInterval(checkReminders, 30000)
-    return () => window.clearInterval(interval)
-  }, [events, notificationPermission])
+  return () => window.clearTimeout(timeout)
+}, [events, loading, ready])
+
 
   const filteredEvents = useMemo(() => {
     const term = search.trim().toLocaleLowerCase('pt-BR')
@@ -260,16 +246,23 @@ export default function CalendarApp() {
   }
 
   async function enableNotifications() {
-    if (typeof Notification === 'undefined') {
-      setToast('Este navegador não oferece notificações.')
-      return
-    }
-    const permission = await Notification.requestPermission()
+  try {
+    const permission = await registerPushNotifications()
+
     setNotificationPermission(permission)
-    setToast(permission === 'granted'
-      ? 'Notificações do navegador ativadas.'
-      : 'Permissão de notificações não concedida.')
+    setPushRegistered(permission === 'granted')
+
+    setToast(
+      permission === 'granted'
+        ? 'Notificações ativadas neste dispositivo!'
+        : 'Permissão de notificações não concedida.'
+    )
+  } catch (err) {
+    setToast(
+      err.message || 'Não foi possível ativar as notificações.'
+    )
   }
+}
 
   const calendarDays = useMemo(() => {
     if (view === 'day') return [parseDateKey(dateKey(currentDate))]
@@ -469,13 +462,28 @@ export default function CalendarApp() {
                 <small>{formatDate(event.reminderAt, { day: '2-digit', month: '2-digit' })} às {formatTime(event.reminderAt)}</small>
               </div>
             ))}
-            <button className="calendar-notification-button" onClick={enableNotifications} disabled={notificationPermission === 'granted'}>
-              <Bell size={14} />
-              {notificationPermission === 'granted' ? 'Notificações permitidas' : 'Ativar notificações do navegador'}
-            </button>
+            <button
+  className="calendar-notification-button"
+  onClick={enableNotifications}
+  disabled={
+    pushRegistered ||
+    notificationPermission === 'denied' ||
+    notificationPermission === 'unsupported'
+  }
+>
+  <Bell size={14} />
+
+  {pushRegistered
+    ? 'Notificações ativadas neste dispositivo'
+    : notificationPermission === 'denied'
+      ? 'Permissão bloqueada no navegador'
+      : 'Ativar notificações neste dispositivo'}
+</button>
             <small className="calendar-notification-note">
-              Os lembretes ficam registrados no calendário. As notificações do navegador dependem da permissão e de o Eldoria estar aberto.
-            </small>
+  Os lembretes são processados pelo servidor e podem chegar
+  mesmo quando o Eldoria não está aberto, desde que o dispositivo
+  esteja conectado e ofereça suporte a notificações Push.
+</small>
           </div>
         </aside>
       </div>
