@@ -2,8 +2,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Code2, Folder, FolderPlus, FileCode, Plus,
-  Search, Trash2, Star, Save, Share2, History,
-  ChevronRight, Library, Users, Globe, Lock,
+  Search, Trash2, Star, Save, History,
+  ChevronRight, Library, Lock,
   Loader2, X, Copy, Download, RefreshCw,
 } from 'lucide-react'
 
@@ -21,7 +21,6 @@ import {
   createCodeFile,
   updateCodeItem,
   deleteCodeItem,
-  shareLibrary,
   toggleFavorite,
   listVersions,
   restoreVersion,
@@ -43,15 +42,10 @@ export default function CodeLibraryApp() {
   const [status, setStatus] = useState('')
 
   const [showLibraryModal, setShowLibraryModal] = useState(false)
-  const [showShareModal, setShowShareModal] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
 
   const [libraryName, setLibraryName] = useState('')
   const [libraryDescription, setLibraryDescription] = useState('')
-  const [libraryVisibility, setLibraryVisibility] = useState('private')
-
-  const [shareUsername, setShareUsername] = useState('')
-  const [shareRole, setShareRole] = useState('viewer')
 
   const [versions, setVersions] = useState([])
 
@@ -225,26 +219,24 @@ export default function CodeLibraryApp() {
   // ===================================================
 
   async function handleCreateLibrary(e) {
-    e.preventDefault()
+  e.preventDefault()
 
-    try {
-      const library = await createLibrary(
-        libraryName,
-        libraryDescription,
-        libraryVisibility
-      )
+  try {
+    const library = await createLibrary(
+      libraryName,
+      libraryDescription
+    )
 
-      setLibraries(current => [library, ...current])
-      setActiveLibrary(library)
+    setLibraries(current => [library, ...current])
+    setActiveLibrary(library)
 
-      setLibraryName('')
-      setLibraryDescription('')
-      setLibraryVisibility('private')
-      setShowLibraryModal(false)
-    } catch (e) {
-      setError(e.message)
-    }
+    setLibraryName('')
+    setLibraryDescription('')
+    setShowLibraryModal(false)
+  } catch (e) {
+    setError(e.message)
   }
+}
 
   // ===================================================
   // CRIAR PASTA
@@ -343,27 +335,7 @@ export default function CodeLibraryApp() {
     }
   }
 
-  // ===================================================
-  // COMPARTILHAR
-  // ===================================================
 
-  async function handleShare(e) {
-    e.preventDefault()
-
-    try {
-      await shareLibrary(
-        activeLibrary.id,
-        shareUsername,
-        shareRole
-      )
-
-      setShareUsername('')
-      setShowShareModal(false)
-      setStatus('Acesso compartilhado com sucesso.')
-    } catch (e) {
-      setError(e.message)
-    }
-  }
 
   // ===================================================
   // HISTORICO
@@ -500,12 +472,7 @@ export default function CodeLibraryApp() {
                 setSearch('')
               }}
             >
-              {library.visibility === 'public'
-                ? <Globe size={17}/>
-                : library.visibility === 'shared'
-                  ? <Users size={17}/>
-                  : <Lock size={17}/>
-              }
+              <Lock size={17}/>
 
               <span>{library.name}</span>
             </button>
@@ -554,12 +521,6 @@ export default function CodeLibraryApp() {
               </div>
 
               <div className="cl-header-actions">
-                <button
-                  title="Compartilhar"
-                  onClick={() => setShowShareModal(true)}
-                >
-                  <Share2 size={18}/>
-                </button>
 
                 <button
                   title="Atualizar"
@@ -820,57 +781,8 @@ export default function CodeLibraryApp() {
               placeholder="Descreva sua biblioteca..."
             />
 
-            <label>Visibilidade</label>
-            <select
-              value={libraryVisibility}
-              onChange={e => setLibraryVisibility(e.target.value)}
-            >
-              <option value="private">Privada</option>
-              <option value="shared">Compartilhada</option>
-              <option value="public">Pública</option>
-            </select>
-
             <button type="submit">
               Criar biblioteca
-            </button>
-          </form>
-        </div>
-      )}
-
-      {/* MODAL: COMPARTILHAR */}
-
-      {showShareModal && (
-        <div className="cl-modal-backdrop">
-          <form className="cl-modal" onSubmit={handleShare}>
-            <button
-              type="button"
-              className="cl-modal-close"
-              onClick={() => setShowShareModal(false)}
-            >
-              <X/>
-            </button>
-
-            <h2>Compartilhar biblioteca</h2>
-
-            <label>Identificador do usuário</label>
-            <input
-              required
-              value={shareUsername}
-              onChange={e => setShareUsername(e.target.value)}
-              placeholder="@usuario"
-            />
-
-            <label>Permissão</label>
-            <select
-              value={shareRole}
-              onChange={e => setShareRole(e.target.value)}
-            >
-              <option value="viewer">Visualizador</option>
-              <option value="editor">Editor</option>
-            </select>
-
-            <button type="submit">
-              Compartilhar
             </button>
           </form>
         </div>
