@@ -212,6 +212,8 @@ export default function CalendarApp() {
       setToast('A data final precisa ser posterior à data inicial.')
       return
     }
+    const now = new Date().toISOString()
+
     const normalized = {
       ...event,
       title,
@@ -219,6 +221,8 @@ export default function CalendarApp() {
       startsAt: start.toISOString(),
       endsAt: end.toISOString(),
       reminderMinutes: Number(event.reminderMinutes) || 0,
+      createdAt: event.createdAt || now,
+      updatedAt: now,
     }
     setEvents(current => {
       const exists = current.some(item => item.id === normalized.id)

@@ -351,8 +351,8 @@ async function saveCalendarSnapshot(events) {
           all_day: Boolean(event.allDay),
           category: event.category || 'Pessoal',
           reminder_minutes: Number(event.reminderMinutes) || 0,
-          created_at: event.createdAt,
-          updated_at: event.updatedAt,
+          created_at: event.createdAt || new Date().toISOString(),
+          updated_at: event.updatedAt || new Date().toISOString(),
         })),
         { onConflict: 'id' }
       )
