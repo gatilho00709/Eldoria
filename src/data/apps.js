@@ -83,7 +83,7 @@ export const apps = [
   name: 'Observatório Climático',
   description: 'Acompanhe o clima atual e previsões meteorológicas.',
   category: 'Utilidades',
-  icon: 'CloudSun',
+  icon: CloudSun,
   path: '/app/weather',
   status: 'Disponível',
 },
