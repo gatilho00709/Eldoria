@@ -237,6 +237,33 @@ export default function CodeLibraryApp() {
     setError(e.message)
   }
 }
+async function handleDeleteLibrary() {
+  if (!activeLibrary) return
+
+  const confirmed = window.confirm(
+    `Tem certeza que deseja excluir a biblioteca "${activeLibrary.name}"? Esta ação não poderá ser desfeita.`
+  )
+
+  if (!confirmed) return
+
+  try {
+    await deleteLibrary(activeLibrary.id)
+
+    setLibraries(current =>
+      current.filter(library => library.id !== activeLibrary.id)
+    )
+
+    setActiveLibrary(null)
+    setFolders([])
+    setItems([])
+    setActiveFolder(null)
+    setActiveItem(null)
+
+    setStatus('Biblioteca excluída.')
+  } catch (e) {
+    setError(`Erro ao excluir biblioteca: ${e.message}`)
+  }
+}
 
   // ===================================================
   // CRIAR PASTA
@@ -522,13 +549,22 @@ export default function CodeLibraryApp() {
 
               <div className="cl-header-actions">
 
-                <button
-                  title="Atualizar"
-                  onClick={() => loadLibraryContent(activeLibrary)}
-                >
-                  <RefreshCw size={18}/>
-                </button>
-              </div>
+  <button
+    title="Atualizar"
+    onClick={() => loadLibraryContent(activeLibrary)}
+  >
+    <RefreshCw size={18}/>
+  </button>
+
+  <button
+    className="cl-delete"
+    title="Excluir biblioteca"
+    onClick={handleDeleteLibrary}
+  >
+    <Trash2 size={18}/>
+  </button>
+
+</div>
             </header>
 
             <div className="cl-workspace">
