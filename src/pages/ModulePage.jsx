@@ -8,6 +8,8 @@ import CalendarApp from '../modules/calendar/CalendarApp'
 import HabitsApp from '../modules/habits/HabitsApp'
 import ConnectApp from '../modules/connect/ConnectApp'
 import CodeLibraryApp from '../modules/code-library/CodeLibraryApp'
+import WeatherApp from '../modules/weather/WeatherApp'
+
 
 export default function ModulePage() {
   const { appId } = useParams()
@@ -44,6 +46,8 @@ if (appId === 'habits') {
 }
 
 if (appId === 'connect') return <ConnectApp />
+
+if (appId === 'weather') return <WeatherApp />
 
 
   const Icon = app.icon

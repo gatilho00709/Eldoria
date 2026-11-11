@@ -7,6 +7,7 @@ import {
   ChartNoAxesCombined,
   Crown,
   MessageCircle,
+  CloudSun,
 } from 'lucide-react'
 
 import { Code2 } from 'lucide-react'
@@ -18,6 +19,7 @@ export const apps = [
   name: 'Biblioteca de Código',
   description: 'Organize, edite e compartilhe códigos.',
   icon: Code2,
+  status: 'Disponível',
   },
 
   {
@@ -76,4 +78,13 @@ export const apps = [
   icon: MessageCircle,
   status: 'Disponível',
   },
+  {
+  id: 'weather',
+  name: 'Observatório Climático',
+  description: 'Acompanhe o clima atual e previsões meteorológicas.',
+  category: 'Utilidades',
+  icon: 'CloudSun',
+  path: '/app/weather',
+  status: 'Disponível',
+},
 ]
