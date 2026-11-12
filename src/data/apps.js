@@ -8,20 +8,19 @@ import {
   Crown,
   MessageCircle,
   CloudSun,
+  Code2,
+  Languages,
 } from 'lucide-react'
 
-import { Code2 } from 'lucide-react'
-
 export const apps = [
-
   {
-  id: 'code-library',
-  name: 'Biblioteca de Código',
-  description: 'Organize, edite e compartilhe códigos.',
-  icon: Code2,
-  status: 'Disponível',
+    id: 'code-library',
+    name: 'Biblioteca de Código',
+    description: 'Organize, edite e compartilhe códigos.',
+    category: 'Criação',
+    icon: Code2,
+    status: 'Disponível',
   },
-
   {
     id: 'thumbnail',
     name: 'Criador de Thumbnail',
@@ -71,20 +70,29 @@ export const apps = [
     status: 'Em breve',
   },
   {
-  id: 'connect',
-  name: 'Eldoria Connect',
-  description: 'Converse, compartilhe imagens e faça chamadas.',
-  category: 'Comunicação',
-  icon: MessageCircle,
-  status: 'Disponível',
+    id: 'connect',
+    name: 'Eldoria Connect',
+    description: 'Converse, compartilhe imagens e faça chamadas.',
+    category: 'Produtividade',
+    icon: MessageCircle,
+    status: 'Disponível',
   },
   {
-  id: 'weather',
-  name: 'Observatório Climático',
-  description: 'Acompanhe o clima atual e previsões meteorológicas.',
-  category: 'Utilidades',
-  icon: CloudSun,
-  path: '/app/weather',
-  status: 'Disponível',
-},
+    id: 'weather',
+    name: 'Observatório Climático',
+    description: 'Acompanhe o clima atual e previsões meteorológicas.',
+    category: 'Estudos',
+    icon: CloudSun,
+    path: '/app/weather',
+    status: 'Disponível',
+  },
+  {
+    id: 'academy',
+    name: 'Academia de Línguas',
+    description: 'Aprenda japonês e inglês com aulas, avaliações e acompanhamento.',
+    category: 'Estudos',
+    icon: Languages,
+    status: 'Disponível',
+  },
 ]
+

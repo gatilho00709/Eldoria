@@ -2,6 +2,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, Crown } from 'lucide-react'
 import { apps } from '../data/apps'
+
 import NotesApp from '../modules/notes/NotesApp'
 import TasksApp from '../modules/tasks/TasksApp'
 import CalendarApp from '../modules/calendar/CalendarApp'
@@ -9,7 +10,7 @@ import HabitsApp from '../modules/habits/HabitsApp'
 import ConnectApp from '../modules/connect/ConnectApp'
 import CodeLibraryApp from '../modules/code-library/CodeLibraryApp'
 import WeatherApp from '../modules/weather/WeatherApp'
-
+import AcademyApp from '../modules/academy/AcademyApp'
 
 export default function ModulePage() {
   const { appId } = useParams()
@@ -26,29 +27,14 @@ export default function ModulePage() {
     )
   }
 
-  if (appId === 'code-library') {
-  return <CodeLibraryApp />
-}
-
-  if (appId === 'notes') {
-    return <NotesApp />
-  }
-  if (appId === 'tasks') {
-  return <TasksApp />
-}
-
-if (appId === 'calendar') {
-  return <CalendarApp />
-}
-
-if (appId === 'habits') {
-  return <HabitsApp />
-}
-
-if (appId === 'connect') return <ConnectApp />
-
-if (appId === 'weather') return <WeatherApp />
-
+  if (appId === 'code-library') return <CodeLibraryApp />
+  if (appId === 'notes') return <NotesApp />
+  if (appId === 'tasks') return <TasksApp />
+  if (appId === 'calendar') return <CalendarApp />
+  if (appId === 'habits') return <HabitsApp />
+  if (appId === 'connect') return <ConnectApp />
+  if (appId === 'weather') return <WeatherApp />
+  if (appId === 'academy') return <AcademyApp />
 
   const Icon = app.icon
 
@@ -84,5 +70,6 @@ if (appId === 'weather') return <WeatherApp />
     </div>
   )
 }
+
 
 

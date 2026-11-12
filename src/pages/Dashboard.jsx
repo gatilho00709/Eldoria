@@ -15,6 +15,7 @@ export default function Dashboard() {
     'Todos',
     'Produtividade',
     'Criação',
+    'Estudos',
     'Eldoria',
   ]
 
@@ -125,4 +126,5 @@ export default function Dashboard() {
     </div>
   )
 }
+
 
