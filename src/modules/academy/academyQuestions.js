@@ -1322,7 +1322,7 @@ export const QUESTION_BANK = {
     ["Como pedir água?", ["みずを ください", "みずを しました", "みずが いきます", "みずに くださいです"], 0, "ください é uma forma educada de pedir algo."],
     ["Qual frase significa 'pretendo ir amanhã'?", ["あした いく つもりです", "きのう いきました", "あした いきたいでした", "あした いぬが ほしいです"], 0, "つもりです expressa intenção."]
   ])
-}
+},
 
 
 16: {
