@@ -1492,7 +1492,7 @@ export const QUESTION_BANK = {
     ["Como se lê アイス?", ["AISU", "AISE", "AISO", "AKISU"], 0, "ア + イ + ス formam AISU."],
     ["Qual sequência está correta?", ["サ シ ス セ ソ", "サ ス シ ソ セ", "シ サ セ ス ソ", "ソ セ ス シ サ"], 0, "Essa é a sequência correta da linha S."]
   ])
-}
+},
 
 
 18: {
@@ -4477,7 +4477,7 @@ export const QUESTION_BANK = {
       ["「三年間勉強しています」は何を表しますか？", ["Duração de três anos", "Três dias", "Três pessoas", "Três livros"], 0, "年間 indica duração em anos."],
       ["日本語の学習で総合的に必要な能力は？", ["読解・聴解・会話・作文", "読解だけ", "漢字だけ", "翻訳だけ"], 0, "As habilidades são leitura, compreensão auditiva, conversação e escrita."]
     ])
-  }
+  },
 
 
 
@@ -4489,7 +4489,7 @@ export const QUESTION_BANK = {
 // 5 questões por dia + 5 de recuperação
 // ==========================================
 
-{
+
   1: {
     days: {
       1: buildQuestions(1, 1, [
@@ -5029,7 +5029,7 @@ export const QUESTION_BANK = {
       ["Complete: He usually ___ to school, but today he is ___ at home.", ["walks / studying", "is walking / studies", "walk / study", "walked / studies"], 0, "Usually walks é hábito; is studying é ação acontecendo hoje."]
     ])
   }
-}
+},
 
 
 // ==========================================
@@ -5037,7 +5037,6 @@ export const QUESTION_BANK = {
 // 5 questões por dia + 5 de recuperação
 // ==========================================
 
-{
   11: {
     days: {
       1: buildQuestions(11, 1, [
@@ -5306,11 +5305,9 @@ export const QUESTION_BANK = {
       ["Complete: Next weekend, we ___ travel.", ["are going to", "did", "was", "does"], 0, "Are going to expressa planos futuros com we."],
       ["Choose the correct sentence.", ["She don't like coffee.", "She doesn't like coffee.", "She doesn't likes coffee.", "She not like coffee."], 1, "Com she, usamos doesn't + verbo na forma base."]
     ])
-  }
 },
 
 
-{
   // ==========================================
   // SEMANA 16 — TESTE DE BASE
   // Comunicação prática: apresentação, rotina,
@@ -5603,11 +5600,9 @@ export const QUESTION_BANK = {
       ["Choose the correct sentence.", ["She have just arrived.", "She has just arrive.", "She has just arrived.", "She just has arrive."], 2, "Has just arrived é a estrutura correta."],
       ["What does 'Have you ever eaten sushi?' mean?", ["Você come sushi todos os dias?", "Você comeu sushi ontem?", "Você vai comer sushi?", "Você já comeu sushi alguma vez?"], 3, "Ever pergunta sobre uma experiência em algum momento da vida."]
     ])
-  }
 },
 
 
-{
   // ==========================================
   // SEMANA 21 — PRESENT PERFECT CONTINUOUS
   // ==========================================
@@ -5891,11 +5886,9 @@ export const QUESTION_BANK = {
       ["Someone gives the perfect explanation. You say:", ["You hit the nail on the head.", "It costs a blue moon.", "It's a piece of leg.", "Once in a cake."], 0, "Hit the nail on the head significa acertar exatamente."],
       ["Which idiom describes something extremely expensive?", ["Piece of cake", "Cost an arm and a leg", "Once in a blue moon", "Hit the nail on the head"], 1, "Cost an arm and a leg significa custar muito caro."]
     ])
-  }
 },
 
 
-{
   // ==========================================
   // SEMANA 26 — GERUND VS. INFINITIVE
   // ==========================================
@@ -6179,11 +6172,8 @@ export const QUESTION_BANK = {
       ["Complete: This is the place ___ we met.", ["who", "whose", "which", "where"], 3, "Where indica o lugar."],
       ["What is the purpose of a relative clause?", ["To add information about a noun.", "To form every question.", "To change all verbs into the past.", "To express only future plans."], 0, "Relative Clauses acrescentam informações sobre um substantivo."]
     ])
-  }
 },
 
-
-{
   // ==========================================
   // SEMANA 31 — GÍRIAS E EXPRESSÕES INFORMAIS
   // ==========================================
@@ -6752,7 +6742,6 @@ export const QUESTION_BANK = {
       ["What does 'deadline' mean?", ["Meeting.", "Salary.", "Final time limit.", "Promotion."], 2, "Deadline é o prazo final."],
       ["What is the purpose of a conclusion in an essay?", ["Introduce unrelated ideas.", "Repeat the introduction word for word.", "Start a new argument.", "Summarize the main points and close the text."], 3, "A conclusão sintetiza o texto e encerra o argumento."]
     ])
-  }
 },
 
 
@@ -7411,5 +7400,4 @@ export const QUESTION_BANK = {
 }
 
 
-  }
 };
