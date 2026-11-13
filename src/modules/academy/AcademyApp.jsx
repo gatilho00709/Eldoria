@@ -1,668 +1,106 @@
+import { useEffect, useMemo, useState } from "react";
+import { BookOpen, CheckCircle2, ChevronLeft, ChevronRight, GraduationCap, Languages, RotateCcw, Trophy } from "lucide-react";
+import { createQuiz, getCurriculum, getLesson, gradeQuiz } from "./academyEngine";
+import { EMPTY_ACADEMY_DATA, loadAcademyData, saveAcademyData } from "./academyService";
+import "./AcademyApp.css";
 
-import { useEffect, useState } from 'react'
-import {
-  BookOpen, GraduationCap, Languages, CalendarDays,
-  Trophy, Brain, Plus, CheckCircle2, Clock,
-  ArrowLeft, ClipboardList, Sparkles, BookMarked,
-  RefreshCw, LoaderCircle, Volume2
-} from 'lucide-react'
+const DAYS=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+const keyFor=(lang,week,day)=>`${lang}-${week}-${day}`;
+const today=()=>new Date().toISOString().slice(0,10);
 
-import './AcademyApp.css'
+export default function AcademyApp(){
+  const [data,setData]=useState(EMPTY_ACADEMY_DATA);
+  const [ready,setReady]=useState(false);
+  const [error,setError]=useState("");
+  const [tab,setTab]=useState("course");
+  const [language,setLanguage]=useState("ja");
+  const [week,setWeek]=useState(1);
+  const [day,setDay]=useState(1);
+  const [quiz,setQuiz]=useState(null);
+  const [answers,setAnswers]=useState({});
+  const [result,setResult]=useState(null);
+  const [mode,setMode]=useState("daily");
+  const [showRecovery,setShowRecovery]=useState(false);
+  const [busy,setBusy]=useState(false);
 
-import {
-  loadAcademyData,
-  saveAcademyData,
-  EMPTY_ACADEMY_DATA,
-} from './academyService'
+  useEffect(()=>{ let active=true; loadAcademyData().then(v=>{if(active){setData(v);setLanguage(v.selectedLanguage||"ja");setWeek(v.selectedWeek?.[v.selectedLanguage||"ja"]||1);setReady(true);}}).catch(e=>{if(active){setError(`Não foi possível carregar o progresso: ${e.message}`);setReady(true);}}); return ()=>{active=false};},[]);
+  useEffect(()=>{if(!ready)return;const timer=setTimeout(()=>saveAcademyData(data).catch(e=>setError(`Falha ao salvar: ${e.message}`)),500);return()=>clearTimeout(timer);},[data,ready]);
 
-import {
-  createLesson,
-  generateQuiz,
-  gradeQuiz,
-  distributeWeeklyContent,
-  getDayName,
-} from './academyEngine'
+  const curriculum=useMemo(()=>getCurriculum(language),[language]);
+  const currentWeek=curriculum[week-1];
+  const lesson=getLesson(language,week,day);
+  const progress=data.progress||{};
+  const weekProgress=Array.from({length:6},(_,i)=>progress[keyFor(language,week,i+1)]?.status==="passed");
+  const completedDays=weekProgress.filter(Boolean).length;
+  const updateData=(fn)=>setData(old=>fn({...old}));
+  const chooseLanguage=(lang)=>{setLanguage(lang);setWeek(data.selectedWeek?.[lang]||1);setDay(1);setQuiz(null);setResult(null);updateData(d=>{d.selectedLanguage=lang;return d;});};
+  const chooseWeek=(n)=>{const w=Math.max(1,Math.min(52,n));setWeek(w);setDay(1);setQuiz(null);setResult(null);updateData(d=>{d.selectedWeek={...(d.selectedWeek||{}),[language]:w};return d;});};
+  const startQuiz=(kind="daily")=>{
+    const count=kind==="recovery"?5:10;
+    const q=createQuiz({language,week,day,count,type:kind,seed:Date.now()});
+    setMode(kind);setQuiz(q);setAnswers({});setResult(null);setShowRecovery(false);setTab("lesson");
+  };
+  const submitQuiz=()=>{
+    if(!quiz)return;
+    const graded=gradeQuiz(quiz,answers);setResult(graded);
+    const report={id:`${Date.now()}-${Math.random()}`,date:today(),language,week,weekTitle:currentWeek.title,day,type:mode,correct:graded.correct,total:graded.total,score:graded.score,passed:graded.passed};
+    updateData(d=>{
+      d.reports=[report,...(d.reports||[])].slice(0,500);
+      const k=keyFor(language,week,day);
+      const old=d.progress[k]||{};
+      if(mode==="daily"&&graded.passed)d.progress[k]={...old,status:"passed",bestScore:Math.max(old.bestScore||0,graded.score),dailyPassed:true};
+      if(mode==="recovery"&&graded.passed)d.progress[k]={...old,status:"passed",bestScore:Math.max(old.bestScore||0,graded.score),dailyPassed:true,recoveryPassed:true};
+      if(mode==="final"&&graded.passed){d.progress[`final-${language}-${week}`]={status:"passed",bestScore:graded.score};d.progress[`week-${language}-${week}`]={status:"passed",bestScore:graded.score};}
+      return d;
+    });
+  };
+  const startFinal=()=>{
+    const q=createQuiz({language,week,day:1,count:10,type:"final",seed:Date.now()});
+    setMode("final");setQuiz(q);setAnswers({});setResult(null);setTab("lesson");
+  };
+  const goNext=()=>{if(day<6){setDay(day+1);setQuiz(null);setResult(null);}else startFinal();};
+  const allReports=(data.reports||[]).filter(r=>r.language===language);
+  const avg=allReports.length?Math.round(allReports.reduce((a,r)=>a+r.score,0)/allReports.length):0;
+  const finalPassed=progress[`final-${language}-${week}`]?.status==="passed";
 
-import { CURRICULUM } from './academyCurriculum'
-
-const TABS = [
-  { id: 'home', label: 'Início', icon: GraduationCap },
-  { id: 'planner', label: 'Planejamento', icon: CalendarDays },
-  { id: 'vocabulary', label: 'Vocabulário', icon: BookMarked },
-  { id: 'reports', label: 'Relatórios', icon: ClipboardList },
-]
-
-export default function AcademyApp() {
-  const [data, setData] = useState(EMPTY_ACADEMY_DATA)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
-  const [tab, setTab] = useState('home')
-  const [language, setLanguage] = useState('japanese')
-  const [topic, setTopic] = useState('')
-  const [content, setContent] = useState('')
-  const [selectedDays, setSelectedDays] = useState([1, 2, 3, 4, 5, 6])
-  const [plan, setPlan] = useState([])
-  const [lesson, setLesson] = useState(null)
-  const [quiz, setQuiz] = useState([])
-  const [answers, setAnswers] = useState({})
-  const [quizType, setQuizType] = useState('daily')
-  const [result, setResult] = useState(null)
-  const [vocabWord, setVocabWord] = useState('')
-  const [vocabReading, setVocabReading] = useState('')
-  const [vocabMeaning, setVocabMeaning] = useState('')
-
-  useEffect(() => {
-    let active = true
-
-    async function load() {
-      try {
-        const saved = await loadAcademyData()
-        if (active) setData(saved)
-      } catch (err) {
-        if (active) setError(err.message || 'Não foi possível carregar a Academia.')
-      } finally {
-        if (active) setLoading(false)
-      }
-    }
-
-    load()
-    return () => { active = false }
-  }, [])
-
-  useEffect(() => {
-    if (loading) return
-
-    let active = true
-    setSaving(true)
-
-    const timeout = setTimeout(async () => {
-      try {
-        await saveAcademyData(data)
-        if (active) setError('')
-      } catch (err) {
-        if (active) setError(
-          err.message || 'Erro ao salvar os dados da Academia.'
-        )
-      } finally {
-        if (active) setSaving(false)
-      }
-    }, 700)
-
-    return () => {
-      active = false
-      clearTimeout(timeout)
-    }
-  }, [data, loading])
-
-  function updateData(key, value) {
-    setData(previous => ({ ...previous, [key]: value }))
-  }
-
-  function toggleDay(day) {
-    setSelectedDays(previous =>
-      previous.includes(day)
-        ? previous.filter(item => item !== day)
-        : [...previous, day].sort()
-    )
-  }
-
-  function createPlan() {
-    const newPlan = distributeWeeklyContent(content, selectedDays)
-    setPlan(newPlan)
-    updateData('plans', [
-      ...data.plans,
-      {
-        id: crypto.randomUUID(),
-        language,
-        createdAt: new Date().toISOString(),
-        items: newPlan,
-      },
-    ])
-    setContent('')
-  }
-
-  function startLesson(selectedTopic = topic) {
-    if (!selectedTopic.trim()) return
-
-    const newLesson = createLesson(language, selectedTopic, content)
-
-    setLesson(newLesson)
-    setQuiz([])
-    setAnswers({})
-    setResult(null)
-    setTab('lesson')
-  }
-
-  function startAssessment(type = 'daily') {
-    if (!lesson) return
-
-    const amount = type === 'recovery' ? 5 : 10
-
-    setQuizType(type)
-    setQuiz(generateQuiz(language, amount))
-    setAnswers({})
-    setResult(null)
-    setTab('quiz')
-  }
-
-  function submitQuiz() {
-    const score = gradeQuiz(quiz, answers)
-
-    const report = {
-      id: crypto.randomUUID(),
-      language,
-      topic: lesson?.topic || 'Prova final',
-      type: quizType,
-      date: new Date().toISOString(),
-      ...score,
-      answers,
-    }
-
-    updateData('reports', [...data.reports, report])
-    setResult(score)
-  }
-
-  function startFinalExam() {
-    setLesson({
-      id: crypto.randomUUID(),
-      language,
-      topic: 'Prova final semanal',
-      explanation: 'Esta avaliação reúne os conhecimentos estudados durante a semana.',
-      examples: [],
-    })
-
-    setQuizType('final')
-    setQuiz(generateQuiz(language, 10))
-    setAnswers({})
-    setResult(null)
-    setTab('quiz')
-  }
-
-  function startRecovery() {
-    startAssessment('recovery')
-  }
-
-  function addVocabulary() {
-    if (!vocabWord.trim() || !vocabMeaning.trim()) return
-
-    updateData('vocabulary', [
-      ...data.vocabulary,
-      {
-        id: crypto.randomUUID(),
-        language,
-        word: vocabWord.trim(),
-        reading: vocabReading.trim(),
-        meaning: vocabMeaning.trim(),
-      },
-    ])
-
-    setVocabWord('')
-    setVocabReading('')
-    setVocabMeaning('')
-  }
-
-  function renderHome() {
-    const languageData = CURRICULUM[language]
-    const languageReports = data.reports.filter(item => item.language === language)
-    const completed = languageReports.filter(item => item.passed).length
-
-    return (
-      <>
-        <div className="academy-hero">
-          <div>
-            <span className="academy-eyebrow">CENTRO DE APRENDIZAGEM</span>
-            <h1>Academia de Línguas</h1>
-            <p>Aprenda, pratique, evolua e acompanhe seu progresso.</p>
-          </div>
-          <div className="academy-hero-icon"><GraduationCap size={54} /></div>
-        </div>
-
-        <div className="academy-language-switch">
-          <button
-            className={language === 'japanese' ? 'active' : ''}
-            onClick={() => setLanguage('japanese')}
-          >
-            🇯🇵 Japonês
-          </button>
-          <button
-            className={language === 'english' ? 'active' : ''}
-            onClick={() => setLanguage('english')}
-          >
-            🇬🇧 Inglês
-          </button>
-        </div>
-
-        <div className="academy-section-title">
-          <div>
-            <span className="academy-eyebrow">SUA JORNADA</span>
-            <h2>{languageData.name}</h2>
-          </div>
-        </div>
-
-        <div className="academy-stats">
-          <div className="academy-stat">
-            <BookOpen />
-            <strong>{data.lessons.length}</strong>
-            <span>Aulas registradas</span>
-          </div>
-          <div className="academy-stat">
-            <Trophy />
-            <strong>{completed}</strong>
-            <span>Aprovações</span>
-          </div>
-          <div className="academy-stat">
-            <Brain />
-            <strong>{languageReports.length}</strong>
-            <span>Avaliações</span>
-          </div>
-        </div>
-
-        <div className="academy-action-grid">
-          <button className="academy-action-card" onClick={() => setTab('planner')}>
-            <CalendarDays size={27} />
-            <strong>Planejar semana</strong>
-            <span>Organize seus conteúdos e dias de estudo.</span>
-          </button>
-
-          <button className="academy-action-card" onClick={() => setTab('lesson-create')}>
-            <Sparkles size={27} />
-            <strong>Estudar agora</strong>
-            <span>Crie uma aula e comece a aprender.</span>
-          </button>
-
-          <button className="academy-action-card" onClick={startFinalExam}>
-            <GraduationCap size={27} />
-            <strong>Prova final</strong>
-            <span>Faça uma avaliação de 10 questões.</span>
-          </button>
-
-          <button className="academy-action-card" onClick={() => setTab('vocabulary')}>
-            <BookMarked size={27} />
-            <strong>Vocabulário</strong>
-            <span>Consulte e adicione novas palavras.</span>
-          </button>
-        </div>
-
-        <div className="academy-panel">
-          <h3>Conteúdo disponível</h3>
-          {languageData.levels.map(level => (
-            <div key={level.title}>
-              <span className="academy-level">{level.title}</span>
-              {level.topics.map(item => (
-                <button
-                  className="academy-topic"
-                  key={item.title}
-                  onClick={() => {
-                    setTopic(item.title)
-                    const newLesson = createLesson(language, item.title)
-                    setLesson(newLesson)
-                    updateData('lessons', [...data.lessons, newLesson])
-                    setTab('lesson')
-                  }}
-                >
-                  <BookOpen size={17} />
-                  <span>{item.title}</span>
-                  <span className="academy-topic-arrow">Estudar →</span>
-                </button>
-              ))}
-            </div>
-          ))}
-        </div>
-      </>
-    )
-  }
-
-  function renderPlanner() {
-    return (
-      <div className="academy-panel">
-        <button className="academy-back" onClick={() => setTab('home')}>
-          <ArrowLeft size={16} /> Voltar
-        </button>
-
-        <span className="academy-eyebrow">ORGANIZAÇÃO</span>
-        <h2>Planejamento semanal</h2>
-        <p>Informe os conteúdos. A Academia os distribuirá pelos dias escolhidos.</p>
-
-        <div className="academy-language-switch">
-          <button className={language === 'japanese' ? 'active' : ''} onClick={() => setLanguage('japanese')}>🇯🇵 Japonês</button>
-          <button className={language === 'english' ? 'active' : ''} onClick={() => setLanguage('english')}>🇬🇧 Inglês</button>
-        </div>
-
-        <label className="academy-label">Conteúdos da semana (um por linha)</label>
-        <textarea
-          className="academy-textarea"
-          value={content}
-          onChange={event => setContent(event.target.value)}
-          placeholder={'Exemplo:\nApresentações\nAdjetivos básicos\nVocabulário de animais'}
-        />
-
-        <label className="academy-label">Dias de estudo</label>
-        <div className="academy-days">
-          {[
-            ['Seg', 1], ['Ter', 2], ['Qua', 3],
-            ['Qui', 4], ['Sex', 5], ['Sáb', 6],
-          ].map(([name, day]) => (
-            <button
-              key={day}
-              className={selectedDays.includes(day) ? 'selected' : ''}
-              onClick={() => toggleDay(day)}
-            >
-              {name}
-            </button>
-          ))}
-        </div>
-
-        <p className="academy-hint">Domingo fica reservado para a prova final semanal.</p>
-
-        <button className="academy-primary" onClick={createPlan} disabled={!content.trim() || !selectedDays.length}>
-          <Sparkles size={17} /> Distribuir conteúdos
-        </button>
-
-        {plan.length > 0 && (
-          <div className="academy-plan-result">
-            <h3>Seu planejamento</h3>
-            {plan.map(item => (
-              <div className="academy-plan-item" key={item.id}>
-                <strong>{getDayName(item.day)}</strong>
-                <span>{item.topic}</span>
-              </div>
-            ))}
-            <button className="academy-primary" onClick={() => setTab('home')}>Concluir planejamento</button>
-          </div>
-        )}
+  if(!ready)return <div className="academy-shell"><p>Carregando Academia...</p></div>;
+  return <div className="academy-shell">
+    <header className="academy-header">
+      <div className="academy-brand"><div className="academy-emblem"><GraduationCap/></div><div><span className="academy-kicker">CENTRO DE APRENDIZADO</span><h1>Academia de Línguas</h1><p>Seu progresso, suas aulas, seu ritmo.</p></div></div>
+      <div className="academy-language-switch">
+        <button className={language==="ja"?"active":""} onClick={()=>chooseLanguage("ja")}>🇯🇵 Japonês</button>
+        <button className={language==="en"?"active":""} onClick={()=>chooseLanguage("en")}>🇺🇸 Inglês</button>
       </div>
-    )
-  }
+    </header>
+    {error&&<div className="academy-alert">{error} <span>Confira se executou o SQL da tabela academy_data.</span></div>}
+    <nav className="academy-tabs">
+      {[["course","Curso"],["lesson","Aula e prova"],["reports","Relatórios"],["vocabulary","Vocabulário"]].map(([id,label])=><button key={id} className={tab===id?"selected":""} onClick={()=>setTab(id)}>{label}</button>)}
+    </nav>
+    {tab==="course"&&<>
+      <section className="academy-overview">
+        <div><span className="academy-kicker">{currentWeek.phase}</span><h2>Semana {week} — {currentWeek.title}</h2><p>{currentWeek.goal}</p></div>
+        <div className="academy-week-controls"><button aria-label="Semana anterior" onClick={()=>chooseWeek(week-1)} disabled={week===1}><ChevronLeft/></button><select value={week} onChange={e=>chooseWeek(Number(e.target.value))}>{curriculum.map(w=><option value={w.number} key={w.number}>{progress[`week-${language}-${w.number}`]?.status==="passed"?"✓ ":""}Semana {w.number} — {w.title}</option>)}</select><button aria-label="Próxima semana" onClick={()=>chooseWeek(week+1)} disabled={week===52}><ChevronRight/></button></div>
+      </section>
+      <section className="academy-progress-card">
+        <div className="academy-progress-top"><strong>Progresso desta semana</strong><span>{completedDays}/6 aulas concluídas</span></div>
+        <div className="academy-progress-track"><div style={{width:`${completedDays/6*100}%`}}/></div>
+        <div className="academy-progress-dots">{DAYS.map((d,i)=><span key={d} className={weekProgress[i]?"done":""}>{i+1}</span>)}</div>
+      </section>
+      <div className="academy-day-grid">{currentWeek.days.map((d,i)=>{const p=progress[keyFor(language,week,i+1)];return <button key={d.day} className={`academy-day-card ${p?.status==="passed"?"complete":""} ${day===d.day?"current":""}`} onClick={()=>{setDay(d.day);setTab("lesson");setQuiz(null);setResult(null);}}><span className="academy-day-number">DIA {d.day}</span><strong>{d.title}</strong><small>{p?.status==="passed"?"Concluída":DAYS[i]}</small>{p?.status==="passed"&&<CheckCircle2 className="academy-day-check"/>}</button>})}</div>
+      <section className="academy-final-card"><div><Trophy/><div><strong>Dia 7 — Avaliação final</strong><p>10 questões sobre os conteúdos dos seis dias.</p><small>{finalPassed?"Avaliação concluída":"Disponível quando quiser revisar a semana"}</small></div></div><button onClick={startFinal}>Fazer prova semanal</button></section>
+    </>}
+    {tab==="lesson"&&<section className="academy-lesson">
+      {!quiz?<><div className="academy-lesson-heading"><span className="academy-kicker">SEMANA {week} · DIA {day}</span><h2>{lesson.title}</h2><p>{currentWeek.title}</p></div><article className="academy-explanation"><h3><BookOpen size={18}/> Explicação da aula</h3><p>{lesson.explanation}</p><h4>Exemplos</h4>{lesson.examples.map(x=><div className="academy-example" key={x}>{x}</div>)}<h4>Pontos para dominar</h4><ul>{lesson.keyPoints.map(x=><li key={x}>{x}</li>)}</ul><p className="academy-engine-note">A explicação segue o currículo cadastrado. O gerador de questões atual usa modelos programados e bancos de exercícios; ele não é uma IA generativa.</p></article><div className="academy-lesson-actions"><button className="academy-primary" onClick={()=>startQuiz("daily")}>Iniciar avaliação · 10 questões</button><button onClick={()=>{if(day>1){setDay(day-1);setQuiz(null);setResult(null)}else chooseWeek(week-1)}} disabled={week===1&&day===1}>Aula anterior</button><button onClick={()=>{if(day<6){setDay(day+1);setQuiz(null);setResult(null)}else startFinal()}}>Próxima aula <ChevronRight size={16}/></button></div></>
+      :<><div className="academy-quiz-heading"><span className="academy-kicker">{mode==="final"?"AVALIAÇÃO SEMANAL":mode==="recovery"?"RECUPERAÇÃO":"AVALIAÇÃO DIÁRIA"}</span><h2>{mode==="final"?`Prova da semana ${week}`:lesson.title}</h2><p>{quiz.length} questões · Aprovação: 80%</p></div>{quiz.map((q,i)=><article className="academy-question" key={q.id}><strong>{i+1}. {q.prompt}</strong><div className="academy-options">{q.options.map((op,j)=><label key={`${q.id}-${j}`} className={result?(j===q.correctAnswer?"correct":Number(answers[q.id])===j?"wrong":""):""}><input type="radio" name={q.id} value={j} checked={String(answers[q.id])===String(j)} disabled={!!result} onChange={()=>setAnswers(a=>({...a,[q.id]:String(j)}))}/><span>{op}</span></label>)}</div>{result&&<p className="academy-feedback">{result.results[i].correct?"Correto!":"Resposta correta: "+q.options[q.correctAnswer]} — {q.explanation}</p>}</article>)}{!result?<button className="academy-primary academy-submit" disabled={Object.keys(answers).length!==quiz.length} onClick={submitQuiz}>Corrigir avaliação</button>:<div className="academy-result"><strong>{result.correct}/{result.total} · {result.score}%</strong><p>{result.passed?"Parabéns! Você atingiu a nota necessária.":"Você ainda não atingiu 80%. Revise o conteúdo e tente a recuperação."}</p>{!result.passed&&mode==="daily"&&<button className="academy-primary" onClick={()=>startQuiz("recovery")}>Fazer recuperação · 5 questões</button>}{result.passed&&mode!=="final"&&<button className="academy-primary" onClick={goNext}>{day<6?"Ir para próxima aula":"Ir para avaliação semanal"}</button>}{mode==="final"&&<button onClick={()=>{setQuiz(null);setResult(null);setTab("course")}}>Voltar ao curso</button>}</div>}</>}
+    </section>}
+    {tab==="reports"&&<section className="academy-reports"><div className="academy-stat-grid"><div><span>Avaliações realizadas</span><strong>{allReports.length}</strong></div><div><span>Média geral</span><strong>{avg}%</strong></div><div><span>Aulas concluídas</span><strong>{Object.entries(progress).filter(([k,v])=>k.startsWith(`${language}-`)&&v.status==="passed").length}</strong></div></div><h2>Histórico de avaliações</h2>{allReports.length===0?<p>Ainda não há avaliações registradas.</p>:allReports.slice(0,50).map(r=><article className="academy-report-row" key={r.id}><div><strong>Semana {r.week} — {r.weekTitle}</strong><small>{r.type==="final"?"Prova semanal":r.type==="recovery"?"Recuperação":`Dia ${r.day}`} · {r.date}</small></div><b className={r.passed?"pass":"fail"}>{r.correct}/{r.total} · {r.score}%</b></article>)}</section>}
+    {tab==="vocabulary"&&<Vocabulary data={data} setData={setData} language={language}/>}
+  </div>;
+}
 
-  function renderLessonCreate() {
-    return (
-      <div className="academy-panel">
-        <button className="academy-back" onClick={() => setTab('home')}>
-          <ArrowLeft size={16} /> Voltar
-        </button>
-        <span className="academy-eyebrow">NOVA AULA</span>
-        <h2>O que vamos estudar?</h2>
-
-        <label className="academy-label">Idioma</label>
-        <div className="academy-language-switch">
-          <button className={language === 'japanese' ? 'active' : ''} onClick={() => setLanguage('japanese')}>🇯🇵 Japonês</button>
-          <button className={language === 'english' ? 'active' : ''} onClick={() => setLanguage('english')}>🇬🇧 Inglês</button>
-        </div>
-
-        <label className="academy-label">Assunto</label>
-        <input className="academy-input" value={topic} onChange={event => setTopic(event.target.value)} placeholder="Ex.: Apresentações" />
-
-        <label className="academy-label">Material personalizado (opcional)</label>
-        <textarea className="academy-textarea" value={content} onChange={event => setContent(event.target.value)} placeholder="Cole aqui o conteúdo que deseja estudar..." />
-
-        <button className="academy-primary" onClick={() => {
-          const newLesson = createLesson(language, topic, content)
-          setLesson(newLesson)
-          updateData('lessons', [...data.lessons, newLesson])
-          setTab('lesson')
-          setContent('')
-        }} disabled={!topic.trim()}>
-          <BookOpen size={17} /> Criar aula
-        </button>
-      </div>
-    )
-  }
-
-  function renderLesson() {
-    if (!lesson) return null
-
-    return (
-      <div className="academy-panel">
-        <button className="academy-back" onClick={() => setTab('home')}>
-          <ArrowLeft size={16} /> Voltar
-        </button>
-
-        <span className="academy-eyebrow">AULA DE {CURRICULUM[lesson.language].name.toUpperCase()}</span>
-        <h2>{lesson.topic}</h2>
-
-        <div className="academy-explanation">
-          <h3><BookOpen size={19} /> Explicação</h3>
-          <p>{lesson.explanation}</p>
-        </div>
-
-        {lesson.examples?.length > 0 && (
-          <div className="academy-examples">
-            <h3>Exemplos</h3>
-            {lesson.examples.map((example, index) => (
-              <div className="academy-example" key={index}>
-                <strong>{example.jp}</strong>
-                <span>{example.romaji}</span>
-                <small>{example.pt}</small>
-                <button
-                  className="academy-audio"
-                  title="Pronúncia do navegador"
-                  onClick={() => {
-                    if ('speechSynthesis' in window) {
-                      const speech = new SpeechSynthesisUtterance(example.jp)
-                      speech.lang = lesson.language === 'japanese' ? 'ja-JP' : 'en-US'
-                      window.speechSynthesis.speak(speech)
-                    }
-                  }}
-                >
-                  <Volume2 size={16} />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="academy-hint">
-          Leia a explicação, observe os exemplos e depois faça a avaliação.
-        </div>
-
-        <button className="academy-primary" onClick={() => startAssessment('daily')}>
-          <ClipboardList size={17} /> Fazer avaliação de 10 questões
-        </button>
-      </div>
-    )
-  }
-
-  function renderQuiz() {
-    if (result) {
-      return (
-        <div className="academy-panel academy-result">
-          <Trophy size={45} />
-          <span className="academy-eyebrow">RESULTADO DA AVALIAÇÃO</span>
-          <h2>{result.percentage}%</h2>
-          <p>{result.correct} de {result.total} respostas corretas.</p>
-
-          <div className={`academy-result-status ${result.passed ? 'passed' : 'failed'}`}>
-            {result.passed ? 'Aprovado! Excelente trabalho.' : 'Você precisa fazer a recuperação.'}
-          </div>
-
-          <div className="academy-review">
-            {quiz.map((question, index) => (
-              <div key={question.id}>
-                <strong>{index + 1}. {question.question}</strong>
-                <p>Sua resposta: {question.options[answers[index]] ?? 'Não respondida'}</p>
-                <p>Resposta correta: {question.options[question.answer]}</p>
-                <small>{question.explanation}</small>
-              </div>
-            ))}
-          </div>
-
-          {!result.passed && quizType !== 'recovery' && (
-            <button className="academy-primary" onClick={startRecovery}>
-              <RefreshCw size={17} /> Fazer recuperação de 5 questões
-            </button>
-          )}
-
-          {!result.passed && quizType === 'recovery' && (
-            <p className="academy-hint">Revise a aula e tente novamente em outra sessão.</p>
-          )}
-
-          <button className="academy-secondary" onClick={() => setTab('home')}>Voltar ao início</button>
-        </div>
-      )
-    }
-
-    return (
-      <div className="academy-panel">
-        <button className="academy-back" onClick={() => setTab('lesson')}>
-          <ArrowLeft size={16} /> Voltar à aula
-        </button>
-
-        <span className="academy-eyebrow">
-          {quizType === 'recovery' ? 'RECUPERAÇÃO' : quizType === 'final' ? 'PROVA FINAL' : 'AVALIAÇÃO'}
-        </span>
-        <h2>{quiz.length} questões</h2>
-        <p>Você precisa alcançar pelo menos 80% para ser aprovado.</p>
-
-        {quiz.map((question, index) => (
-          <div className="academy-question" key={question.id}>
-            <strong>{index + 1}. {question.question}</strong>
-            <div className="academy-options">
-              {question.options.map((option, optionIndex) => (
-                <button
-                  key={optionIndex}
-                  className={Number(answers[index]) === optionIndex ? 'selected' : ''}
-                  onClick={() => setAnswers(previous => ({ ...previous, [index]: optionIndex }))}
-                >
-                  <span>{String.fromCharCode(65 + optionIndex)}</span>
-                  {option}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
-
-        <button className="academy-primary" onClick={submitQuiz} disabled={Object.keys(answers).length !== quiz.length}>
-          Finalizar avaliação
-        </button>
-      </div>
-    )
-  }
-
-  function renderVocabulary() {
-    const words = data.vocabulary.filter(item => item.language === language)
-
-    return (
-      <div className="academy-panel">
-        <button className="academy-back" onClick={() => setTab('home')}>
-          <ArrowLeft size={16} /> Voltar
-        </button>
-        <span className="academy-eyebrow">CADERNO PESSOAL</span>
-        <h2>Vocabulário</h2>
-
-        <div className="academy-language-switch">
-          <button className={language === 'japanese' ? 'active' : ''} onClick={() => setLanguage('japanese')}>🇯🇵 Japonês</button>
-          <button className={language === 'english' ? 'active' : ''} onClick={() => setLanguage('english')}>🇬🇧 Inglês</button>
-        </div>
-
-        <div className="academy-vocab-form">
-          <input className="academy-input" placeholder="Palavra" value={vocabWord} onChange={event => setVocabWord(event.target.value)} />
-          <input className="academy-input" placeholder="Leitura / pronúncia" value={vocabReading} onChange={event => setVocabReading(event.target.value)} />
-          <input className="academy-input" placeholder="Significado" value={vocabMeaning} onChange={event => setVocabMeaning(event.target.value)} />
-          <button className="academy-primary" onClick={addVocabulary}><Plus size={17} /> Adicionar palavra</button>
-        </div>
-
-        <div className="academy-vocabulary-list">
-          {words.map((item, index) => (
-            <div className="academy-vocabulary-item" key={item.id || `${item.word}-${index}`}>
-              <strong>{item.word}</strong>
-              <span>{item.reading}</span>
-              <small>{item.meaning}</small>
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  function renderReports() {
-    return (
-      <div className="academy-panel">
-        <button className="academy-back" onClick={() => setTab('home')}>
-          <ArrowLeft size={16} /> Voltar
-        </button>
-        <span className="academy-eyebrow">ACOMPANHAMENTO</span>
-        <h2>Relatórios</h2>
-
-        <div className="academy-stats">
-          <div className="academy-stat"><ClipboardList /><strong>{data.reports.length}</strong><span>Avaliações</span></div>
-          <div className="academy-stat"><CheckCircle2 /><strong>{data.reports.filter(item => item.passed).length}</strong><span>Aprovações</span></div>
-          <div className="academy-stat"><Trophy /><strong>{data.reports.length ? Math.round(data.reports.reduce((sum, item) => sum + item.percentage, 0) / data.reports.length) : 0}%</strong><span>Média geral</span></div>
-        </div>
-
-        <h3>Histórico de avaliações</h3>
-        {data.reports.length === 0 && <p>Nenhuma avaliação registrada ainda.</p>}
-
-        {[...data.reports].reverse().map(report => (
-          <div className="academy-report" key={report.id}>
-            <div>
-              <strong>{report.topic}</strong>
-              <span>{CURRICULUM[report.language]?.name} · {new Date(report.date).toLocaleDateString('pt-BR')}</span>
-            </div>
-            <strong>{report.percentage}%</strong>
-            <span className={report.passed ? 'report-pass' : 'report-fail'}>
-              {report.passed ? 'Aprovado' : 'Recuperação'}
-            </span>
-          </div>
-        ))}
-
-        <div className="academy-hint">
-          A prova final semanal tem 10 questões e exige 80% de aproveitamento.
-        </div>
-      </div>
-    )
-  }
-
-  if (loading) {
-    return <div className="academy-loading"><LoaderCircle className="academy-spin" /> Carregando Academia...</div>
-  }
-
-  return (
-    <div className="academy">
-      <header className="academy-header">
-        <div className="academy-brand">
-          <GraduationCap size={27} />
-          <div>
-            <strong>ELDORIA</strong>
-            <span>ACADEMIA DE LÍNGUAS</span>
-          </div>
-        </div>
-
-        <span className="academy-save-status">
-          {saving ? 'Salvando...' : 'Progresso sincronizado'}
-        </span>
-      </header>
-
-      {error && <div className="academy-error">{error}</div>}
-
-      <nav className="academy-nav">
-        {TABS.map(item => {
-          const Icon = item.icon
-          return (
-            <button
-              key={item.id}
-              className={tab === item.id ? 'active' : ''}
-              onClick={() => setTab(item.id)}
-            >
-              <Icon size={17} /> {item.label}
-            </button>
-          )
-        })}
-      </nav>
-
-      <main className="academy-content">
-        {tab === 'home' && renderHome()}
-        {tab === 'planner' && renderPlanner()}
-        {tab === 'lesson-create' && renderLessonCreate()}
-        {tab === 'lesson' && renderLesson()}
-        {tab === 'quiz' && renderQuiz()}
-        {tab === 'vocabulary' && renderVocabulary()}
-        {tab === 'reports' && renderReports()}
-      </main>
-
-      <footer className="academy-footer">
-        ELDORIA ACADEMY · APRENDA UM POUCO TODOS OS DIAS
-      </footer>
-    </div>
-  )
+function Vocabulary({data,setData,language}){
+  const [term,setTerm]=useState("");const [meaning,setMeaning]=useState("");
+  const words=(data.vocabulary||[]).filter(w=>w.language===language);
+  const add=()=>{if(!term.trim()||!meaning.trim())return;setData(d=>({...d,vocabulary:[...(d.vocabulary||[]),{id:Date.now(),language,term:term.trim(),meaning:meaning.trim(),createdAt:today(),reviewed:false}]}));setTerm("");setMeaning("");};
+  return <section className="academy-vocabulary"><h2>Caderno de vocabulário</h2><p>Guarde palavras e expressões para revisar depois.</p><div className="academy-vocab-form"><input value={term} onChange={e=>setTerm(e.target.value)} placeholder={language==="ja"?"Palavra em japonês":"Word in English"}/><input value={meaning} onChange={e=>setMeaning(e.target.value)} placeholder="Significado em português"/><button className="academy-primary" onClick={add}>Adicionar</button></div>{words.map(w=><article key={w.id} className="academy-report-row"><div><strong>{w.term}</strong><small>{w.meaning}</small></div><button onClick={()=>setData(d=>({...d,vocabulary:d.vocabulary.map(x=>x.id===w.id?{...x,reviewed:!x.reviewed}:x)}))}>{w.reviewed?"Revisado":"Marcar revisão"}</button></article>)}</section>;
 }

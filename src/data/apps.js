@@ -10,6 +10,7 @@ import {
   CloudSun,
   Code2,
   Languages,
+  GraduationCap,
 } from 'lucide-react'
 
 export const apps = [
@@ -94,5 +95,13 @@ export const apps = [
     icon: Languages,
     status: 'Disponível',
   },
+  {
+  id: 'academy-languages',
+  name: 'Academia de Línguas',
+  description: 'Aprenda japonês e inglês com cursos semanais, aulas e avaliações.',
+  category: 'Estudos',
+  icon: GraduationCap,
+  status: 'Disponível',
+},
 ]
 
