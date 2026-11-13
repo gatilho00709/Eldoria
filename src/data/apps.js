@@ -92,16 +92,9 @@ export const apps = [
     name: 'Academia de Línguas',
     description: 'Aprenda japonês e inglês com aulas, avaliações e acompanhamento.',
     category: 'Estudos',
-    icon: Languages,
+    icon: GraduationCap,
     status: 'Disponível',
   },
-  {
-  id: 'academy-languages',
-  name: 'Academia de Línguas',
-  description: 'Aprenda japonês e inglês com cursos semanais, aulas e avaliações.',
-  category: 'Estudos',
-  icon: GraduationCap,
-  status: 'Disponível',
-},
+
 ]
 

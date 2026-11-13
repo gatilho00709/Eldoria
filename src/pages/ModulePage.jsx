@@ -11,7 +11,6 @@ import ConnectApp from '../modules/connect/ConnectApp'
 import CodeLibraryApp from '../modules/code-library/CodeLibraryApp'
 import WeatherApp from '../modules/weather/WeatherApp'
 import AcademyApp from '../modules/academy/AcademyApp'
-import AcademyApp from '../modules/academy/AcademyApp'
 
 export default function ModulePage() {
   const { appId } = useParams()
@@ -27,7 +26,6 @@ export default function ModulePage() {
       </div>
     )
   }
-  if (appId === 'academy-languages') return <AcademyApp />
   if (appId === 'code-library') return <CodeLibraryApp />
   if (appId === 'notes') return <NotesApp />
   if (appId === 'tasks') return <TasksApp />
