@@ -14100,6 +14100,23 @@ const en = [
   // Continue adicionando as semanas em ordem.
 ];
 
+// Normaliza os exemplos do currículo inglês
+// Aceita tanto textos quanto objetos { en, pt }.
+en.forEach(week => {
+  week.days.forEach(day => {
+    day.examples = (day.examples || []).map(example => {
+      if (typeof example === "string") {
+        return example;
+      }
+
+      if (example && typeof example === "object") {
+        return `${example.en || ""} — ${example.pt || ""}`;
+      }
+
+      return String(example ?? "");
+    });
+  });
+});
 
 // ============================================
 // ORGANIZAÇÃO DO CURRÍCULO
