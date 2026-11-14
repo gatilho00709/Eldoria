@@ -7077,6 +7077,23 @@ const jp = [
 
   // Continue adicionando as semanas em ordem.
 ];
+// Normaliza os exemplos do currículo japonês
+// Aceita tanto textos quanto objetos { jp, pt }.
+jp.forEach(week => {
+  week.days.forEach(day => {
+    day.examples = (day.examples || []).map(example => {
+      if (typeof example === "string") {
+        return example;
+      }
+
+      if (example && typeof example === "object") {
+        return `${example.jp || ""} — ${example.pt || ""}`;
+      }
+
+      return String(example ?? "");
+    });
+  });
+});
 
 
 // ============================================
