@@ -35,11 +35,39 @@ export default function AcademyApp(){
   const updateData=(fn)=>setData(old=>fn({...old}));
   const chooseLanguage=(lang)=>{setLanguage(lang);setWeek(data.selectedWeek?.[lang]||1);setDay(1);setQuiz(null);setResult(null);updateData(d=>{d.selectedLanguage=lang;return d;});};
   const chooseWeek=(n)=>{const w=Math.max(1,Math.min(52,n));setWeek(w);setDay(1);setQuiz(null);setResult(null);updateData(d=>{d.selectedWeek={...(d.selectedWeek||{}),[language]:w};return d;});};
-  const startQuiz=(kind="daily")=>{
-    const count=kind==="recovery"?5:10;
-    const q=createQuiz({language,week,day,count,type:kind,seed:Date.now()});
-    setMode(kind);setQuiz(q);setAnswers({});setResult(null);setShowRecovery(false);setTab("lesson");
-  };
+  const startQuiz = (kind = "daily") => {
+  try {
+    setError("");
+
+    const count = kind === "recovery" ? 5 : 10;
+
+    const q = createQuiz({
+      language,
+      week,
+      day,
+      count,
+      type: kind,
+      seed: Date.now(),
+    });
+
+    if (!q || q.length !== count) {
+      throw new Error(
+        `A avaliação deveria ter ${count} questões, mas não foi gerada corretamente.`
+      );
+    }
+
+    setMode(kind);
+    setQuiz(q);
+    setAnswers({});
+    setResult(null);
+    setShowRecovery(false);
+    setTab("lesson");
+
+     } catch (e) {
+    console.error("Erro ao iniciar avaliação:", e);
+    setError(`Não foi possível iniciar a avaliação: ${e.message}`);
+     }
+    };
   const submitQuiz=()=>{
     if(!quiz)return;
     const graded=gradeQuiz(quiz,answers);setResult(graded);
@@ -54,10 +82,34 @@ export default function AcademyApp(){
       return d;
     });
   };
-  const startFinal=()=>{
-    const q=createQuiz({language,week,day:1,count:10,type:"final",seed:Date.now()});
-    setMode("final");setQuiz(q);setAnswers({});setResult(null);setTab("lesson");
-  };
+  const startFinal = () => {
+  try {
+    setError("");
+
+    const q = createQuiz({
+      language,
+      week,
+      day: 1,
+      count: 10,
+      type: "final",
+      seed: Date.now(),
+    });
+
+    if (!q || q.length !== 10) {
+      throw new Error("A avaliação final não gerou as 10 questões.");
+    }
+
+    setMode("final");
+    setQuiz(q);
+    setAnswers({});
+    setResult(null);
+    setTab("lesson");
+
+  } catch (e) {
+    console.error("Erro ao iniciar avaliação final:", e);
+    setError(`Não foi possível iniciar a prova semanal: ${e.message}`);
+  }
+};
   const goNext=()=>{if(day<6){setDay(day+1);setQuiz(null);setResult(null);}else startFinal();};
   const allReports=(data.reports||[]).filter(r=>r.language===language);
   const avg=allReports.length?Math.round(allReports.reduce((a,r)=>a+r.score,0)/allReports.length):0;
