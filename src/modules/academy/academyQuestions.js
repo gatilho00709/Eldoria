@@ -4483,6 +4483,7 @@ export const QUESTION_BANK = {
       ["日本語の学習で総合的に必要な能力は？", ["読解・聴解・会話・作文", "読解だけ", "漢字だけ", "翻訳だけ"], 0, "As habilidades são leitura, compreensão auditiva, conversação e escrita."]
     ])
   },
+},
 
 
 
@@ -4586,6 +4587,121 @@ export const QUESTION_BANK = {
         ["Complete: We ___ our homework after school.", ["do", "does", "doing", "is do"], 0, "We usa do na forma base."],
         ["Qual expressão indica frequência habitual?", ["Right now", "Yesterday", "Every weekend", "At the moment"], 2, "Every weekend indica algo que acontece regularmente."]
       ]),
+  10: {
+    days: {
+      1: buildQuestions(10, 1, [
+        ["Qual é a estrutura do presente contínuo?", ["Do/does + verbo", "Am/is/are + verbo-ing", "Was/were + verbo", "Will + verbo"], 1, "O present continuous usa am, is ou are + verbo-ing."],
+        ["Complete: I ___ studying now.", ["is", "are", "am", "be"], 2, "I combina com am."],
+        ["Complete: She is ___ a book.", ["read", "reads", "reading", "readed"], 2, "Depois de is, usamos reading."],
+        ["Qual expressão indica uma ação acontecendo agora?", ["Yesterday", "Last week", "Right now", "Every Monday"], 2, "Right now significa agora."],
+        ["Qual frase está no presente contínuo?", ["They play games.", "They played games.", "They are playing games.", "They will play games."], 2, "Are playing indica uma ação em andamento."]
+      ]),
+      2: buildQuestions(10, 2, [
+        ["Complete: He ___ watching a movie.", ["am", "are", "is", "be"], 2, "He usa is."],
+        ["Complete: We are ___ dinner.", ["cook", "cooks", "cooking", "cooked"], 2, "Cooking é a forma -ing de cook."],
+        ["Qual frase está correta?", ["They is running.", "They are running.", "They am running.", "They running are."], 1, "They combina com are."],
+        ["Como dizer 'Eu estou aprendendo inglês'?", ["I learning English.", "I am learning English.", "I is learning English.", "I do learning English."], 1, "I am + learning."],
+        ["Complete: The baby is ___.", ["sleep", "sleeps", "sleeping", "slept"], 2, "Sleeping é a forma -ing de sleep."]
+      ]),
+      3: buildQuestions(10, 3, [
+        ["Qual é a negativa de 'I am working'?", ["I don't working.", "I am not working.", "I isn't working.", "I not am working."], 1, "A negativa é formada com not depois de am."],
+        ["Complete: She ___ not listening.", ["are", "am", "is", "do"], 2, "She is not pode ser contraído para she isn't."],
+        ["Qual frase está correta?", ["We aren't studying.", "We isn't studying.", "We don't studying.", "We not studying."], 0, "We usa are not ou aren't."],
+        ["Como dizer 'Eles não estão dormindo'?", ["They isn't sleeping.", "They aren't sleeping.", "They don't sleeping.", "They not are sleeping."], 1, "They aren't + sleeping."],
+        ["Complete: I am ___ TV right now.", ["watch", "watches", "watching", "watched"], 2, "Watching é a forma -ing de watch."]
+      ]),
+      4: buildQuestions(10, 4, [
+        ["Qual pergunta está correta?", ["Are you studying?", "Do you studying?", "Is you studying?", "You are studying?"], 0, "Are vem antes do sujeito you."],
+        ["Complete: ___ he sleeping?", ["Am", "Are", "Is", "Do"], 2, "He usa is."],
+        ["Qual pergunta significa 'O que você está fazendo?'?", ["What do you do?", "What are you doing?", "What you are do?", "What is you doing?"], 1, "What are you doing? pergunta sobre a atividade atual."],
+        ["Como responder 'Are they coming?' negativamente?", ["No, they don't.", "No, they aren't.", "No, they isn't.", "No, they weren't."], 1, "A resposta curta usa aren't."],
+        ["Complete: Why ___ you laughing?", ["is", "am", "are", "do"], 2, "You combina com are."]
+      ]),
+      5: buildQuestions(10, 5, [
+        ["Qual frase descreve um hábito?", ["I am eating now.", "I eat breakfast every day.", "I was eating yesterday.", "I will eat later."], 1, "Every day indica um hábito, então usamos presente simples."],
+        ["Qual frase descreve uma ação acontecendo neste momento?", ["She works every day.", "She is working now.", "She worked yesterday.", "She will work tomorrow."], 1, "Is working now indica uma ação em andamento."],
+        ["Complete: He usually ___ football, but today he is ___ basketball.", ["plays / playing", "play / plays", "playing / play", "played / plays"], 0, "Usually indica hábito; today he is playing indica ação atual."],
+        ["Qual frase diferencia corretamente rotina e ação atual?", ["I study every day, but I am watching TV now.", "I studying every day, but I watch now.", "I am study every day, but I watching now.", "I studied every day, but I am watch now."], 0, "Present simple descreve rotina; present continuous descreve o momento atual."],
+        ["Complete: My father ___ coffee every morning, but now he ___ tea.", ["drinks / is drinking", "is drinking / drinks", "drink / drinking", "drank / drink"], 0, "Drinks é hábito; is drinking é ação atual."]
+      ]),
+      6: buildQuestions(10, 6, [
+        ["Leia: 'Emma usually walks to school, but today she is taking the bus.' Como Emma normalmente vai à escola?", ["De ônibus.", "A pé.", "De carro.", "De bicicleta."], 1, "Usually walks indica o hábito: ela vai a pé."],
+        ["No texto anterior, como Emma está indo hoje?", ["A pé.", "De trem.", "De ônibus.", "De carro."], 2, "Today she is taking the bus indica que hoje está indo de ônibus."],
+        ["Qual frase está correta?", ["I am knowing the answer.", "I know the answer.", "I knowing the answer.", "I does know the answer."], 1, "Know normalmente é um verbo de estado e costuma ser usado no presente simples."],
+        ["Complete: Listen! Someone ___ at the door.", ["knocks", "is knocking", "knocked", "knock"], 1, "Listen! indica algo acontecendo agora."],
+        ["Qual alternativa explica melhor a diferença entre present simple e present continuous?", ["Os dois sempre indicam passado.", "Present simple indica hábitos e fatos; present continuous indica ações em andamento.", "Present continuous só é usado para o futuro.", "Present simple sempre precisa de -ing."], 1, "Essa é a diferença central entre os dois tempos."]
+      ])
+    },
+    recovery: buildRecovery(10, [
+      ["Complete: They ___ playing now.", ["is", "am", "are", "be"], 2, "They usa are."],
+      ["Qual frase está correta?", ["She is cook dinner.", "She is cooking dinner.", "She cooking dinner.", "She are cooking dinner."], 1, "Is + verbo-ing forma o presente contínuo."],
+      ["Qual frase descreve um hábito?", ["I am reading now.", "I read every night.", "I was reading.", "I will read later."], 1, "Every night indica uma rotina."],
+      ["Qual pergunta está correta?", ["What are you doing?", "What do you doing?", "What is you doing?", "What you are doing?"], 0, "Are vem antes de you."],
+      ["Complete: He usually ___ to school, but today he is ___ at home.", ["walks / studying", "is walking / studies", "walk / study", "walked / studies"], 0, "Usually walks é hábito; is studying é ação acontecendo hoje."]
+    ])
+  }
+},
+
+
+// ==========================================
+// INGLÊS — SEMANAS 11 A 15
+// 5 questões por dia + 5 de recuperação
+// ==========================================
+
+  11: {
+    days: {
+      1: buildQuestions(11, 1, [
+        ["Choose the correct sentence to express ability.", ["I can swim.", "I cans swim.", "I can to swim.", "I am can swim."], 0, "Can é um verbo modal. Ele é seguido pelo verbo principal sem 'to' e não recebe -s."],
+        ["Complete: She ___ speak three languages.", ["cans", "can", "canning", "is can"], 1, "Can não muda com he, she ou it."],
+        ["What does 'I can't drive' mean?", ["Eu não gosto de dirigir.", "Eu não estou dirigindo.", "Eu não consigo dirigir.", "Eu não dirigi."], 2, "Can't é a forma negativa de can e indica incapacidade ou falta de habilidade."],
+        ["Choose the correct question.", ["Can you help me?", "Do you can help me?", "Can you to help me?", "Are you can help me?"], 0, "Para perguntas com can, basta colocar can antes do sujeito."],
+        ["Complete: My brother can ___ very fast.", ["runs", "running", "to run", "run"], 3, "Depois de can, usamos o verbo na forma base: run."]
+      ]),
+      2: buildQuestions(11, 2, [
+        ["Which sentence expresses inability?", ["He can cook.", "He can't cook.", "He could cook.", "He may cook."], 1, "Can't expressa que alguém não consegue ou não sabe fazer algo."],
+        ["Complete: ___ your sister play the piano?", ["Does can", "Is can", "Can", "Do can"], 2, "Can vem diretamente antes do sujeito nas perguntas."],
+        ["Choose the correct translation of 'Nós conseguimos terminar'.", ["We can finish.", "We cans finish.", "We can to finish.", "We are can finish."], 0, "We can finish significa que nós conseguimos terminar."],
+        ["Which sentence is grammatically correct?", ["She can sings.", "She can singing.", "She can to sing.", "She can sing."], 3, "O verbo após can fica na forma base, sem -s, -ing ou to."],
+        ["Complete: I ___ understand this question.", ["can", "cans", "am can", "can to"], 0, "Can é usado para falar de capacidade ou habilidade."]
+      ]),
+      3: buildQuestions(11, 3, [
+        ["Which modal is commonly used to make a more polite request?", ["Must", "Could", "Should", "Have"], 1, "Could pode deixar um pedido mais educado do que can."],
+        ["Choose the polite request.", ["Could you open the window, please?", "You could open window?", "Do could you open it?", "Could to open the window?"], 0, "Could you...? é uma estrutura comum para pedidos educados."],
+        ["Complete: When I was younger, I ___ run very fast.", ["can", "may", "could", "must"], 2, "Could pode expressar uma habilidade que existia no passado."],
+        ["What does 'Could you repeat that?' mean?", ["Você pode repetir isso?", "Você repetiu aquilo?", "Você deveria repetir?", "Você vai repetir aquilo?"], 0, "Could you...? pode ser usado para pedir algo educadamente."],
+        ["Choose the correct sentence.", ["He could to swim.", "He could swims.", "He could swimming.", "He could swim."], 3, "Depois de could, o verbo também fica na forma base."]
+      ]),
+      4: buildQuestions(11, 4, [
+        ["Which modal expresses possibility?", ["May", "Must", "Should", "Have to"], 0, "May pode indicar possibilidade, dependendo do contexto."],
+        ["Complete: It ___ rain tomorrow.", ["must to", "may", "should to", "cans"], 1, "May indica que algo talvez aconteça."],
+        ["What does 'She might be at home' mean?", ["Ela está definitivamente em casa.", "Ela precisa estar em casa.", "Ela talvez esteja em casa.", "Ela esteve em casa."], 2, "Might expressa possibilidade, geralmente com um grau de certeza menor."],
+        ["Choose the correct sentence.", ["They might come later.", "They might comes later.", "They might to come later.", "They are might come later."], 0, "Might é seguido pelo verbo na forma base."],
+        ["Complete: I ___ visit my cousin this weekend, but I'm not sure.", ["must", "have to", "should", "might"], 3, "Might combina com situações incertas ou possíveis."]
+      ]),
+      5: buildQuestions(11, 5, [
+        ["Which sentence asks for permission?", ["May I come in?", "I may came in.", "May I to come in?", "Do may I come in?"], 0, "May I...? é uma maneira educada de pedir permissão."],
+        ["Complete: ___ I use your phone, please?", ["Must", "May", "Should", "Have"], 1, "May pode ser usado para pedir autorização."],
+        ["Which sentence expresses a possibility, not a certainty?", ["He is here.", "He must be here.", "He might be here.", "He was here."], 2, "Might indica que existe a possibilidade, mas não há certeza."],
+        ["Choose the correct sentence.", ["May she to leave?", "Does may she leave?", "May she leaves?", "May she leave?"], 3, "Em perguntas com may, o modal vem antes do sujeito."],
+        ["What is the difference between 'can' and 'may' in a permission request?", ["May is often more formal or polite.", "Can is always past tense.", "May means inability.", "There is no possible difference."], 0, "Can também pede permissão, mas may costuma soar mais formal."]
+      ]),
+      6: buildQuestions(11, 6, [
+        ["Complete: I ___ speak English, but I still need practice.", ["might", "can", "may", "could to"], 1, "Can expressa uma habilidade que a pessoa possui."],
+        ["Choose the most polite request.", ["Give me your notebook.", "You give me your notebook?", "Could you lend me your notebook, please?", "Must you lend notebook."], 2, "Could you...? com please é uma forma educada de pedir um favor."],
+        ["Complete: When he was five, he ___ read simple books.", ["can", "may", "must", "could"], 3, "Could expressa habilidade no passado."],
+        ["Which sentence expresses uncertainty?", ["It might snow tonight.", "It snows every winter.", "It is snowing now.", "It snowed yesterday."], 0, "Might indica que algo talvez aconteça."],
+        ["Choose the correct sentence.", ["She may to join us.", "She may joins us.", "She may join us.", "She does may join us."], 2, "May é seguido pelo verbo na forma base."]
+      ])
+    },
+    recovery: buildRecovery(11, [
+      ["Complete: ___ you help me with this exercise?", ["Do", "Can", "Are", "Have"], 1, "Can you...? é uma estrutura correta para pedir ajuda."],
+      ["Choose the correct sentence about past ability.", ["I could swim when I was six.", "I can swam when I was six.", "I could to swim when I was six.", "I could swimming when I was six."], 0, "Could é usado para falar de habilidades no passado."],
+      ["What does 'You might be right' mean?", ["Você está sempre certo.", "Você precisa estar certo.", "Você talvez esteja certo.", "Você estava certo."], 2, "Might expressa possibilidade."],
+      ["Choose the correct permission question.", ["May I to sit here?", "Do may I sit here?", "May I sitting here?", "May I sit here?"], 3, "May I...? é uma forma correta de pedir permissão."],
+      ["Complete: He ___ play the guitar very well.", ["can", "cans", "can to", "is can"], 0, "Can não recebe -s e é seguido pelo verbo na forma base."]
+    ])
+  },
+
       6: buildQuestions(2, 6, [
         ["Qual frase significa 'Ela gosta de livros'?", ["She like books.", "She likes books.", "She liking books.", "She does likes books."], 1, "She usa likes em frases afirmativas."],
         ["Complete: ___ your friends play games?", ["Does", "Do", "Is", "Are"], 1, "Your friends equivale a they, então usamos Do."],
@@ -4978,121 +5094,6 @@ export const QUESTION_BANK = {
       ["Qual pergunta está correta?", ["Was he working?", "Were he working?", "Did he working?", "Does he worked?"], 0, "He usa was."],
       ["O que significa 'I was studying when you arrived'?", ["Eu estudo quando você chega.", "Eu estava estudando quando você chegou.", "Eu estudarei quando você chegar.", "Eu estudei antes de você chegar."], 1, "Was studying indica a ação em andamento."],
       ["Complete: While we ___, it started to rain.", ["walk", "were walking", "walked", "are walking"], 1, "Were walking descreve a ação que estava acontecendo."]
-    ])
-  },
-
-  10: {
-    days: {
-      1: buildQuestions(10, 1, [
-        ["Qual é a estrutura do presente contínuo?", ["Do/does + verbo", "Am/is/are + verbo-ing", "Was/were + verbo", "Will + verbo"], 1, "O present continuous usa am, is ou are + verbo-ing."],
-        ["Complete: I ___ studying now.", ["is", "are", "am", "be"], 2, "I combina com am."],
-        ["Complete: She is ___ a book.", ["read", "reads", "reading", "readed"], 2, "Depois de is, usamos reading."],
-        ["Qual expressão indica uma ação acontecendo agora?", ["Yesterday", "Last week", "Right now", "Every Monday"], 2, "Right now significa agora."],
-        ["Qual frase está no presente contínuo?", ["They play games.", "They played games.", "They are playing games.", "They will play games."], 2, "Are playing indica uma ação em andamento."]
-      ]),
-      2: buildQuestions(10, 2, [
-        ["Complete: He ___ watching a movie.", ["am", "are", "is", "be"], 2, "He usa is."],
-        ["Complete: We are ___ dinner.", ["cook", "cooks", "cooking", "cooked"], 2, "Cooking é a forma -ing de cook."],
-        ["Qual frase está correta?", ["They is running.", "They are running.", "They am running.", "They running are."], 1, "They combina com are."],
-        ["Como dizer 'Eu estou aprendendo inglês'?", ["I learning English.", "I am learning English.", "I is learning English.", "I do learning English."], 1, "I am + learning."],
-        ["Complete: The baby is ___.", ["sleep", "sleeps", "sleeping", "slept"], 2, "Sleeping é a forma -ing de sleep."]
-      ]),
-      3: buildQuestions(10, 3, [
-        ["Qual é a negativa de 'I am working'?", ["I don't working.", "I am not working.", "I isn't working.", "I not am working."], 1, "A negativa é formada com not depois de am."],
-        ["Complete: She ___ not listening.", ["are", "am", "is", "do"], 2, "She is not pode ser contraído para she isn't."],
-        ["Qual frase está correta?", ["We aren't studying.", "We isn't studying.", "We don't studying.", "We not studying."], 0, "We usa are not ou aren't."],
-        ["Como dizer 'Eles não estão dormindo'?", ["They isn't sleeping.", "They aren't sleeping.", "They don't sleeping.", "They not are sleeping."], 1, "They aren't + sleeping."],
-        ["Complete: I am ___ TV right now.", ["watch", "watches", "watching", "watched"], 2, "Watching é a forma -ing de watch."]
-      ]),
-      4: buildQuestions(10, 4, [
-        ["Qual pergunta está correta?", ["Are you studying?", "Do you studying?", "Is you studying?", "You are studying?"], 0, "Are vem antes do sujeito you."],
-        ["Complete: ___ he sleeping?", ["Am", "Are", "Is", "Do"], 2, "He usa is."],
-        ["Qual pergunta significa 'O que você está fazendo?'?", ["What do you do?", "What are you doing?", "What you are do?", "What is you doing?"], 1, "What are you doing? pergunta sobre a atividade atual."],
-        ["Como responder 'Are they coming?' negativamente?", ["No, they don't.", "No, they aren't.", "No, they isn't.", "No, they weren't."], 1, "A resposta curta usa aren't."],
-        ["Complete: Why ___ you laughing?", ["is", "am", "are", "do"], 2, "You combina com are."]
-      ]),
-      5: buildQuestions(10, 5, [
-        ["Qual frase descreve um hábito?", ["I am eating now.", "I eat breakfast every day.", "I was eating yesterday.", "I will eat later."], 1, "Every day indica um hábito, então usamos presente simples."],
-        ["Qual frase descreve uma ação acontecendo neste momento?", ["She works every day.", "She is working now.", "She worked yesterday.", "She will work tomorrow."], 1, "Is working now indica uma ação em andamento."],
-        ["Complete: He usually ___ football, but today he is ___ basketball.", ["plays / playing", "play / plays", "playing / play", "played / plays"], 0, "Usually indica hábito; today he is playing indica ação atual."],
-        ["Qual frase diferencia corretamente rotina e ação atual?", ["I study every day, but I am watching TV now.", "I studying every day, but I watch now.", "I am study every day, but I watching now.", "I studied every day, but I am watch now."], 0, "Present simple descreve rotina; present continuous descreve o momento atual."],
-        ["Complete: My father ___ coffee every morning, but now he ___ tea.", ["drinks / is drinking", "is drinking / drinks", "drink / drinking", "drank / drink"], 0, "Drinks é hábito; is drinking é ação atual."]
-      ]),
-      6: buildQuestions(10, 6, [
-        ["Leia: 'Emma usually walks to school, but today she is taking the bus.' Como Emma normalmente vai à escola?", ["De ônibus.", "A pé.", "De carro.", "De bicicleta."], 1, "Usually walks indica o hábito: ela vai a pé."],
-        ["No texto anterior, como Emma está indo hoje?", ["A pé.", "De trem.", "De ônibus.", "De carro."], 2, "Today she is taking the bus indica que hoje está indo de ônibus."],
-        ["Qual frase está correta?", ["I am knowing the answer.", "I know the answer.", "I knowing the answer.", "I does know the answer."], 1, "Know normalmente é um verbo de estado e costuma ser usado no presente simples."],
-        ["Complete: Listen! Someone ___ at the door.", ["knocks", "is knocking", "knocked", "knock"], 1, "Listen! indica algo acontecendo agora."],
-        ["Qual alternativa explica melhor a diferença entre present simple e present continuous?", ["Os dois sempre indicam passado.", "Present simple indica hábitos e fatos; present continuous indica ações em andamento.", "Present continuous só é usado para o futuro.", "Present simple sempre precisa de -ing."], 1, "Essa é a diferença central entre os dois tempos."]
-      ])
-    },
-    recovery: buildRecovery(10, [
-      ["Complete: They ___ playing now.", ["is", "am", "are", "be"], 2, "They usa are."],
-      ["Qual frase está correta?", ["She is cook dinner.", "She is cooking dinner.", "She cooking dinner.", "She are cooking dinner."], 1, "Is + verbo-ing forma o presente contínuo."],
-      ["Qual frase descreve um hábito?", ["I am reading now.", "I read every night.", "I was reading.", "I will read later."], 1, "Every night indica uma rotina."],
-      ["Qual pergunta está correta?", ["What are you doing?", "What do you doing?", "What is you doing?", "What you are doing?"], 0, "Are vem antes de you."],
-      ["Complete: He usually ___ to school, but today he is ___ at home.", ["walks / studying", "is walking / studies", "walk / study", "walked / studies"], 0, "Usually walks é hábito; is studying é ação acontecendo hoje."]
-    ])
-  }
-},
-
-
-// ==========================================
-// INGLÊS — SEMANAS 11 A 15
-// 5 questões por dia + 5 de recuperação
-// ==========================================
-
-  11: {
-    days: {
-      1: buildQuestions(11, 1, [
-        ["Choose the correct sentence to express ability.", ["I can swim.", "I cans swim.", "I can to swim.", "I am can swim."], 0, "Can é um verbo modal. Ele é seguido pelo verbo principal sem 'to' e não recebe -s."],
-        ["Complete: She ___ speak three languages.", ["cans", "can", "canning", "is can"], 1, "Can não muda com he, she ou it."],
-        ["What does 'I can't drive' mean?", ["Eu não gosto de dirigir.", "Eu não estou dirigindo.", "Eu não consigo dirigir.", "Eu não dirigi."], 2, "Can't é a forma negativa de can e indica incapacidade ou falta de habilidade."],
-        ["Choose the correct question.", ["Can you help me?", "Do you can help me?", "Can you to help me?", "Are you can help me?"], 0, "Para perguntas com can, basta colocar can antes do sujeito."],
-        ["Complete: My brother can ___ very fast.", ["runs", "running", "to run", "run"], 3, "Depois de can, usamos o verbo na forma base: run."]
-      ]),
-      2: buildQuestions(11, 2, [
-        ["Which sentence expresses inability?", ["He can cook.", "He can't cook.", "He could cook.", "He may cook."], 1, "Can't expressa que alguém não consegue ou não sabe fazer algo."],
-        ["Complete: ___ your sister play the piano?", ["Does can", "Is can", "Can", "Do can"], 2, "Can vem diretamente antes do sujeito nas perguntas."],
-        ["Choose the correct translation of 'Nós conseguimos terminar'.", ["We can finish.", "We cans finish.", "We can to finish.", "We are can finish."], 0, "We can finish significa que nós conseguimos terminar."],
-        ["Which sentence is grammatically correct?", ["She can sings.", "She can singing.", "She can to sing.", "She can sing."], 3, "O verbo após can fica na forma base, sem -s, -ing ou to."],
-        ["Complete: I ___ understand this question.", ["can", "cans", "am can", "can to"], 0, "Can é usado para falar de capacidade ou habilidade."]
-      ]),
-      3: buildQuestions(11, 3, [
-        ["Which modal is commonly used to make a more polite request?", ["Must", "Could", "Should", "Have"], 1, "Could pode deixar um pedido mais educado do que can."],
-        ["Choose the polite request.", ["Could you open the window, please?", "You could open window?", "Do could you open it?", "Could to open the window?"], 0, "Could you...? é uma estrutura comum para pedidos educados."],
-        ["Complete: When I was younger, I ___ run very fast.", ["can", "may", "could", "must"], 2, "Could pode expressar uma habilidade que existia no passado."],
-        ["What does 'Could you repeat that?' mean?", ["Você pode repetir isso?", "Você repetiu aquilo?", "Você deveria repetir?", "Você vai repetir aquilo?"], 0, "Could you...? pode ser usado para pedir algo educadamente."],
-        ["Choose the correct sentence.", ["He could to swim.", "He could swims.", "He could swimming.", "He could swim."], 3, "Depois de could, o verbo também fica na forma base."]
-      ]),
-      4: buildQuestions(11, 4, [
-        ["Which modal expresses possibility?", ["May", "Must", "Should", "Have to"], 0, "May pode indicar possibilidade, dependendo do contexto."],
-        ["Complete: It ___ rain tomorrow.", ["must to", "may", "should to", "cans"], 1, "May indica que algo talvez aconteça."],
-        ["What does 'She might be at home' mean?", ["Ela está definitivamente em casa.", "Ela precisa estar em casa.", "Ela talvez esteja em casa.", "Ela esteve em casa."], 2, "Might expressa possibilidade, geralmente com um grau de certeza menor."],
-        ["Choose the correct sentence.", ["They might come later.", "They might comes later.", "They might to come later.", "They are might come later."], 0, "Might é seguido pelo verbo na forma base."],
-        ["Complete: I ___ visit my cousin this weekend, but I'm not sure.", ["must", "have to", "should", "might"], 3, "Might combina com situações incertas ou possíveis."]
-      ]),
-      5: buildQuestions(11, 5, [
-        ["Which sentence asks for permission?", ["May I come in?", "I may came in.", "May I to come in?", "Do may I come in?"], 0, "May I...? é uma maneira educada de pedir permissão."],
-        ["Complete: ___ I use your phone, please?", ["Must", "May", "Should", "Have"], 1, "May pode ser usado para pedir autorização."],
-        ["Which sentence expresses a possibility, not a certainty?", ["He is here.", "He must be here.", "He might be here.", "He was here."], 2, "Might indica que existe a possibilidade, mas não há certeza."],
-        ["Choose the correct sentence.", ["May she to leave?", "Does may she leave?", "May she leaves?", "May she leave?"], 3, "Em perguntas com may, o modal vem antes do sujeito."],
-        ["What is the difference between 'can' and 'may' in a permission request?", ["May is often more formal or polite.", "Can is always past tense.", "May means inability.", "There is no possible difference."], 0, "Can também pede permissão, mas may costuma soar mais formal."]
-      ]),
-      6: buildQuestions(11, 6, [
-        ["Complete: I ___ speak English, but I still need practice.", ["might", "can", "may", "could to"], 1, "Can expressa uma habilidade que a pessoa possui."],
-        ["Choose the most polite request.", ["Give me your notebook.", "You give me your notebook?", "Could you lend me your notebook, please?", "Must you lend notebook."], 2, "Could you...? com please é uma forma educada de pedir um favor."],
-        ["Complete: When he was five, he ___ read simple books.", ["can", "may", "must", "could"], 3, "Could expressa habilidade no passado."],
-        ["Which sentence expresses uncertainty?", ["It might snow tonight.", "It snows every winter.", "It is snowing now.", "It snowed yesterday."], 0, "Might indica que algo talvez aconteça."],
-        ["Choose the correct sentence.", ["She may to join us.", "She may joins us.", "She may join us.", "She does may join us."], 2, "May é seguido pelo verbo na forma base."]
-      ])
-    },
-    recovery: buildRecovery(11, [
-      ["Complete: ___ you help me with this exercise?", ["Do", "Can", "Are", "Have"], 1, "Can you...? é uma estrutura correta para pedir ajuda."],
-      ["Choose the correct sentence about past ability.", ["I could swim when I was six.", "I can swam when I was six.", "I could to swim when I was six.", "I could swimming when I was six."], 0, "Could é usado para falar de habilidades no passado."],
-      ["What does 'You might be right' mean?", ["Você está sempre certo.", "Você precisa estar certo.", "Você talvez esteja certo.", "Você estava certo."], 2, "Might expressa possibilidade."],
-      ["Choose the correct permission question.", ["May I to sit here?", "Do may I sit here?", "May I sitting here?", "May I sit here?"], 3, "May I...? é uma forma correta de pedir permissão."],
-      ["Complete: He ___ play the guitar very well.", ["can", "cans", "can to", "is can"], 0, "Can não recebe -s e é seguido pelo verbo na forma base."]
     ])
   },
 
@@ -7403,6 +7404,5 @@ export const QUESTION_BANK = {
     ["What is the goal of the final assessment?", ["Measure practical independent English use", "Test spelling only", "Repeat beginner vocabulary", "Measure typing speed"], 0, "The final assessment evaluates integrated practical skills."]
   ])
 }
-  }
+  };
 
-};
