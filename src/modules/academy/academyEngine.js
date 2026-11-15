@@ -128,6 +128,13 @@ export function createQuiz({
     throw new Error(`Esta prova precisa ter ${expected} questões.`);
   }
 
+  console.log("=== DIAGNÓSTICO ACADEMY ===");
+console.log("Idioma:", lang);
+console.log("Semana recebida:", week);
+console.log("Tipo da semana:", typeof week);
+console.log("Idiomas cadastrados:", Object.keys(QUESTION_BANK));
+console.log("Semanas em japonês:", Object.keys(QUESTION_BANK.ja || {}));
+
   const weekBank = QUESTION_BANK[lang]?.[week];
 
   if (!weekBank) {
