@@ -146,7 +146,7 @@ console.log("Semanas em japonês:", Object.keys(QUESTION_BANK.ja || {}));
   console.log("DIA 1:", weekBank?.days?.[1]);
   console.log(
   "IDS DO DIA 1:",
-  weekBank?.days?.[1]?.map(q => q.id)
+  JSON.stringify(weekBank?.days?.[1]?.map(q => q.id))
 );
   console.log("QUANTIDADE BRUTA DIA 1:", weekBank?.days?.[1]?.length);
 
