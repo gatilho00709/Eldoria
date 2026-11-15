@@ -92,16 +92,7 @@ function validateQuestion(question) {
     throw new Error(`A questão ${question.id} precisa de 4 alternativas.`);
   }
 
-  console.log("=== QUESTÕES RECEBIDAS ===");
-console.log({
-  language: lang,
-  week,
-  day,
-  type,
-  expected,
-  quantity: questions.length,
-  ids: questions.map(q => q.id),
-});
+  
 
   if (
     !Number.isInteger(question.correctAnswer) ||
@@ -168,6 +159,17 @@ console.log("Semanas em japonês:", Object.keys(QUESTION_BANK.ja || {}));
       `Questões de ${lang}, semana ${week}, aula ${day}, tipo ${type} não cadastradas.`
     );
   }
+
+  console.log("=== QUESTÕES RECEBIDAS ===");
+console.log({
+  language: lang,
+  week,
+  day,
+  type,
+  expected,
+  quantity: questions.length,
+  ids: questions.map(q => q.id),
+});
 
   questions.forEach(validateQuestion);
 
