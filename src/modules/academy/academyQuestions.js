@@ -126,7 +126,6 @@ export const QUESTION_BANK = {
         ["Onde geralmente fica o verbo em japonês?", ["No começo", "No final", "Sempre no meio", "Não existe regra"], 1, "O verbo normalmente aparece no final da oração."]
       ])
     }
-  },
 
 
 // ======================================================
