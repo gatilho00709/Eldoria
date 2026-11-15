@@ -92,6 +92,17 @@ function validateQuestion(question) {
     throw new Error(`A questão ${question.id} precisa de 4 alternativas.`);
   }
 
+  console.log("=== QUESTÕES RECEBIDAS ===");
+console.log({
+  language: lang,
+  week,
+  day,
+  type,
+  expected,
+  quantity: questions.length,
+  ids: questions.map(q => q.id),
+});
+
   if (
     !Number.isInteger(question.correctAnswer) ||
     question.correctAnswer < 0 ||
