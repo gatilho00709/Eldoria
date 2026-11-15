@@ -142,7 +142,7 @@ console.log("Semanas em japonês:", Object.keys(QUESTION_BANK.ja || {}));
 
   const weekBank = QUESTION_BANK[lang]?.[week];
   console.log("BANCO DA SEMANA 11:", weekBank);
-  onsole.log("DIAS CADASTRADOS:", Object.keys(weekBank?.days || {}));
+  console.log("DIAS CADASTRADOS:", Object.keys(weekBank?.days || {}));
   console.log("DIA 1:", weekBank?.days?.[1]);
   console.log("QUANTIDADE BRUTA DIA 1:", weekBank?.days?.[1]?.length);
 
