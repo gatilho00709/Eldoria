@@ -7397,6 +7397,6 @@ export const QUESTION_BANK = {
     ["What is the goal of the final assessment?", ["Measure practical independent English use", "Test spelling only", "Repeat beginner vocabulary", "Measure typing speed"], 0, "The final assessment evaluates integrated practical skills."]
   ])
 }
-
+  }
 
 };
