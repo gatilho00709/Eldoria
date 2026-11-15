@@ -171,6 +171,9 @@ console.log("Semanas em japonês:", Object.keys(QUESTION_BANK.ja || {}));
 
   questions.forEach(validateQuestion);
 
+
+  console.log("QUANTIDADE SELECIONADA:", questions.length, "| Semana:", week, "| Dia:", day, "| Tipo:", type);
+  
   if (questions.length < expected) {
     throw new Error(
       `Banco incompleto: ${questions.length}/${expected} questões.`
