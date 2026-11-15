@@ -121,6 +121,9 @@ export function createQuiz({
 }) {
   const lang = normalizeLanguage(language);
   const expected = QUIZ_SIZES[type];
+  console.log("QUESTION_BANK COMPLETO:", QUESTION_BANK);
+  console.log("CHAVES JA:", Object.keys(QUESTION_BANK.ja || {}));
+  console.log("SEMANA 2 JA:", QUESTION_BANK.ja?.[2]);
 
   if (!expected) throw new Error("Tipo de prova inválido.");
 
