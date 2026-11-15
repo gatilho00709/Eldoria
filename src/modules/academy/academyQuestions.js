@@ -125,7 +125,7 @@ export const QUESTION_BANK = {
         ["Como se pronuncia は quando é partícula?", ["Ha", "Wa", "Hi", "Ho"], 1, "A partícula は é pronunciada WA."],
         ["Onde geralmente fica o verbo em japonês?", ["No começo", "No final", "Sempre no meio", "Não existe regra"], 1, "O verbo normalmente aparece no final da oração."]
       ])
-    }
+    },
 
 
 // ======================================================
