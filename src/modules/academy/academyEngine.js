@@ -149,6 +149,11 @@ console.log("Semanas em japonês:", Object.keys(QUESTION_BANK.ja || {}));
   JSON.stringify(weekBank?.days?.[1]?.map(q => q.id))
 );
   console.log("QUANTIDADE BRUTA DIA 1:", weekBank?.days?.[1]?.length);
+  console.log("CHAVES DA RAIZ:", Object.keys(QUESTION_BANK));
+console.log("CHAVES DE JA:", Object.keys(QUESTION_BANK.ja));
+console.log("JA.EN EXISTE?", Boolean(QUESTION_BANK.ja?.en));
+console.log("JA.EN SEMANA 11:", QUESTION_BANK.ja?.en?.[11]?.days?.[1]?.length);
+console.log("JA SEMANA 11:", QUESTION_BANK.ja?.[11]?.days?.[1]?.length);
 
   if (!weekBank) {
     throw new Error(`Banco da semana ${week} ainda não cadastrado.`);
