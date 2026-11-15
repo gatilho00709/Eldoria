@@ -4,11 +4,6 @@
 // ======================================================
 
 function buildQuestions(week, day, rows) {
-  if (week === 11 && day === 1) {
-    console.log("=== CONSTRUÇÃO SEMANA 11 DIA 1 ===");
-    console.log("LINHAS RECEBIDAS:", rows.length);
-    console.log("CONTEÚDO RECEBIDO:", JSON.stringify(rows));
-  }
 
   return rows.map(([prompt, options, correctAnswer, explanation], i) => ({
     id: `ja-w${week}-d${day}-q${i + 1}`,
