@@ -11,6 +11,7 @@ import ConnectApp from '../modules/connect/ConnectApp'
 import CodeLibraryApp from '../modules/code-library/CodeLibraryApp'
 import WeatherApp from '../modules/weather/WeatherApp'
 import AcademyApp from '../modules/academy/AcademyApp'
+import LaboratoryApp from '../modules/laboratories/LaboratoryApp'
 
 export default function ModulePage() {
   const { appId } = useParams()
@@ -34,6 +35,7 @@ export default function ModulePage() {
   if (appId === 'connect') return <ConnectApp />
   if (appId === 'weather') return <WeatherApp />
   if (appId === 'academy') return <AcademyApp />
+  if (appId === 'laboratory') return <LaboratoryApp />
 
   const Icon = app.icon
 

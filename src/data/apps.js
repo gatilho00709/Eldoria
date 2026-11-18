@@ -11,6 +11,7 @@ import {
   Code2,
   Languages,
   GraduationCap,
+  FlaskConical,
 } from 'lucide-react'
 
 export const apps = [
@@ -95,6 +96,14 @@ export const apps = [
     icon: GraduationCap,
     status: 'Disponível',
   },
+  {
+  id: 'laboratory',
+  name: 'Laboratório',
+  description: 'Explore matérias escolares e engenharia com aulas, avaliações e acompanhamento.',
+  category: 'Estudos',
+  icon: FlaskConical,
+  status: 'Disponível',
+},
 
 ]
 
